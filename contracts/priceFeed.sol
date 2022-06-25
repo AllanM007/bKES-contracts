@@ -22,7 +22,7 @@ contract PriceConsumerV3 {
     function getLatestPrice() public view returns (int) {
         (
             /*uint80 roundID*/,
-            int price,
+            int256 price,
             /*uint startedAt*/,
             /*uint timeStamp*/,
             /*uint80 answeredInRound*/
