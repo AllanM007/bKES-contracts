@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ERC20Permit} from "./ERC20.sol";
+import "./priceFeed.sol";
 
 contract bKES is ERC20Permit{
 
