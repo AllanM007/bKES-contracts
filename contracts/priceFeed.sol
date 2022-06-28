@@ -10,10 +10,10 @@ contract PriceConsumerV3 {
     /**
      * Network: Mumbai
      * Aggregator: MATIC/USD
-     * Address: 0xAB594600376Ec9fD91F8e885dADF0CE036862dE0
+     * Address: 0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada
      */
     constructor() {
-        priceFeed = AggregatorV3Interface(0xAB594600376Ec9fD91F8e885dADF0CE036862dE0);
+        priceFeed = AggregatorV3Interface(0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada);
     }
 
     /**
@@ -28,5 +28,9 @@ contract PriceConsumerV3 {
             /*uint80 answeredInRound*/
         ) = priceFeed.latestRoundData();
         return price;
+    }
+
+    function getDecimalPlaces() public view returns(uint8){
+        return priceFeed.decimals();
     }
 }
