@@ -21,23 +21,19 @@ contract bKES is ERC20Permit{
         _;
     }
 
-    function mintbKES(address account, uint _amount) external onlyOwner {
+    function mintbKES(address account, int256 _amount) external onlyOwner {
 
-        // int256 currentMATICUSDPrice = priceFeed.getLatestPrice();
+        int256 currentMATICKSHPrice = priceFeed.getLatestPrice();
 
-        // uint8 MaticDecimals = priceFeed.getDecimalPlaces();
+        int cValue = currentMATICKSHPrice * _amount;
 
-        // uint256 MaticPrice = MaticDecimals * currentMATICUSDPrice;
-
-        // uint kshMaticValue = MaticPrice * KshUSDXRate;
-
-        // uint MaticKshValue = kshMaticValue * MaticAmount;
+        uint bKESDeposit = (cValue * 100) / 65;
         
-        mint(account, _amount);
+        mint(account, bKESDeposit);
 
-        totalSupply += _amount;
+        totalSupply += bKESDeposit;
 
-        emit Mint(account, _amount);
+        emit Mint(account, bKESDeposit);
     }
 
     function burnbKES(address account, uint256 _amount) external onlyOwner{
