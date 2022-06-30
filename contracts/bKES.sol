@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {ERC20Permit} from "./ERC20.sol";
-import "./priceFeed.sol";
+import "./oraclePriceFeed.sol";
 
 contract bKES is ERC20Permit{
 
     address private owner;
     uint256 totalSupply;
     ERC20Permit token;
-    PriceConsumerV3 priceFeed;
+    APIConsumer priceFeed;
 
     event Mint(address account, uint256 amount);
     event Burn(address account, uint256 amount);
@@ -23,7 +23,7 @@ contract bKES is ERC20Permit{
 
     function mintbKES(address account, int256 _amount) external onlyOwner {
 
-        int256 currentMATICKSHPrice = priceFeed.getLatestPrice();
+        bytes32 currentMATICKSHPrice = priceFeed.requestMATICKESPrice();
 
         int cValue = currentMATICKSHPrice * _amount;
 
