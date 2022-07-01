@@ -21,11 +21,11 @@ contract bKES is ERC20Permit{
         _;
     }
 
-    function mintbKES(address account, int256 _amount) external onlyOwner {
+    function mintbKES(address account, uint256 _amount) external onlyOwner {
 
-        bytes32 currentMATICKSHPrice = priceFeed.requestMATICKESPrice();
+        uint256 currentMATICKSHPrice = priceFeed.price();
 
-        int cValue = currentMATICKSHPrice * _amount;
+        uint256 cValue = currentMATICKSHPrice * _amount;
 
         uint bKESDeposit = (cValue * 100) / 65;
         
