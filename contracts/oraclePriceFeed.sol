@@ -12,6 +12,11 @@ contract APIConsumer is ChainlinkClient {
     bytes32 private jobId;
     uint256 private fee;
 
+    modifier onlyOwner() {
+        require(msg.sender == 0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d, "Unauthorized address");
+        _;
+    }
+
     /**
      * Network: Polygon Mumbai Testnet
      * Oracle: 0x58bbdbfb6fca3129b91f0dbe372098123b38b5e9
@@ -30,44 +35,31 @@ contract APIConsumer is ChainlinkClient {
      * Create a Chainlink request to retrieve API response, find the target price
      * data, then multiply by 100 (to remove decimal places from price).
      */
-    function requestMATICKESPrice() public returns (bytes32 requestId) {
-        Chainlink.Request memory req = buildChainlinkRequest(
-            jobId,
-            address(this),
-            this.fulfill.selector
-        );
+    function requestPriceData() public returns (bytes32 requestId) {
+        Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
 
         // Set the URL to perform the GET request on
-        // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return.
-        req.add(
-            "get",
-            "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=MATIC&to_currency=KES&apikey=E1MLPFUNW7DZE8KP"
-        );
+        req.add('get', 'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=KES');
 
         // Set the path to find the desired data in the API response, where the response format is:
-        // {
-        //     "Realtime Currency Exchange Rate": {
-        //       "1. From_Currency Code": "BTC",
-        //       "2. From_Currency Name": "Bitcoin",
-        //       "3. To_Currency Code": "CNY",
-        //       "4. To_Currency Name": "Chinese Yuan",
-        //       "5. Exchange Rate": "207838.88814500",
-        //       "6. Last Refreshed": "2021-01-26 11:11:07",
-        //       "7. Time Zone": "UTC",
-        //      "8. Bid Price": "207838.82343000",
-        //       "9. Ask Price": "207838.88814500"
+        // {"RAW":
+        //   {"ETH":
+        //    {"KES":
+        //     {
+        //      "PRICE": xxx.xxx,
         //     }
-        //     }
-        string[] memory path = new string[](2);
-        path[0] = "Realtime Currency Exchange Rate";
-        path[1] = "5. Exchange Rate";
-        req.addStringArray("path", path);
+        //    }
+        //   }
+        //  }
+        // request.add("path", "RAW.ETH.USD.PRICE"); // Chainlink nodes prior to 1.0.0 support this format
+        req.add('path', 'RAW,ETH,KES,PRICE'); // Chainlink nodes 1.0.0 and later support this format
 
-        // Multiply the result by 10000000000 to remove decimals
-        req.addInt("times", 10000000000);
+        // Multiply the result by 1000000000000000000 to remove decimals
+        int256 timesAmount = 10**18;
+        req.addInt('times', timesAmount);
 
         // Sends the request
-        return sendChainlinkRequestTo(oracle, req, fee);
+        return sendChainlinkRequest(req, fee);
     }
 
     /**
@@ -78,5 +70,13 @@ contract APIConsumer is ChainlinkClient {
         recordChainlinkFulfillment(_requestId)
     {
         price = _price;
+    }
+
+    /**
+     * Allow withdraw of Link tokens from the contract
+     */
+    function withdrawLink() public onlyOwner {
+        LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
+        require(link.transfer(msg.sender, link.balanceOf(address(this))), 'Unable to transfer');
     }
 }

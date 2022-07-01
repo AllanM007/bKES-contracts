@@ -14,8 +14,8 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const bKES = await hre.ethers.getContractFactory("Greeter");
-  const bkes = await bKES.deploy("Hello, Hardhat!");
+  const bKES = await hre.ethers.getContractFactory("bKES");
+  const bkes = await bKES.deploy();
 
   await bkes.deployed();
 
