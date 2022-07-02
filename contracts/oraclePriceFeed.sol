@@ -73,6 +73,15 @@ contract APIConsumer is ChainlinkClient {
     }
 
     /**
+     * Send Link to the contract
+     */
+
+    function sendLink(uint256 _amount) public onlyOwner {
+        LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
+        require(link.transfer(address(this), _amount), 'Unable to transfer');
+    }
+
+    /**
      * Allow withdraw of Link tokens from the contract
      */
     function withdrawLink() public onlyOwner {
