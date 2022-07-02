@@ -7,7 +7,7 @@ import "./oraclePriceFeed.sol";
 contract bKES is ERC20Permit{
 
     address private owner;
-    uint256 totalSupply;
+    // uint256 totalSupply;
     ERC20Permit token;
     APIConsumer priceFeed;
 
