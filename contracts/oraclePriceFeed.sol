@@ -26,7 +26,6 @@ contract APIConsumer is ChainlinkClient, ConfirmedOwner {
         setChainlinkToken(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
         setChainlinkOracle(0xc8D925525CA8759812d0c299B90247917d4d4b7C);
         jobId = 'bbf0badad29d49dc887504bacfbb905b';
-        // fee = (1 * LINK_DIVISIBILITY) / 10; // 0,1 * 10**18 (Varies by network and job)
         fee = 10**16; //0.01
     }
 
