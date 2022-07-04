@@ -35,8 +35,6 @@ contract CollateralAdapter{
         return true;
     }
 
-    function checkERC20Deposit() public {}
-
     function erc20Withdrawal(address _account, uint256 _amount) public returns(bool){
 
         // revert bKES back to collateral value
@@ -51,4 +49,7 @@ contract CollateralAdapter{
         emit SuccesfulERC20Withdrawal(_account, _amount);
         return true;
     }
+
+    function checkERC20Deposit() public {}
+
 }
