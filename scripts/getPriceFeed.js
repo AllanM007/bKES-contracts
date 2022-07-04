@@ -8,7 +8,7 @@ const { ethers} = require("ethers");
 const contract = require("../artifacts/contracts/oraclePriceFeed.sol/APIConsumer.json");
 
 // Provider
-const alchemyProvider = new ethers.providers.AlchemyProvider(network="mumbai", API_KEY);
+const alchemyProvider = new ethers.providers.AlchemyProvider(network="maticmum", API_KEY);
 
 // Signer
 const signer = new ethers.Wallet(PRIVATE_KEY, alchemyProvider);
@@ -16,26 +16,63 @@ const signer = new ethers.Wallet(PRIVATE_KEY, alchemyProvider);
 console.log(signer.getGasPrice());
 
 // Contract
-const oracleFeedContract = new ethers.Contract("0x1b0bE1E7E37624F94b3FB70D49119d265555E8fC", contract.abi, signer);
-// const gammaTokenContract = new ethers.Contract(process.env.GammaToken_ADDRESS, GammaTokenContractABI.abi, signer );
+const mintbKESContract = new ethers.Contract("0x1b0bE1E7E37624F94b3FB70D49119d265555E8fC", contract.abi, signer);
 
-async function getPriceData() {
+// The minimum ABI required to get the ERC20 Token balance
+const minABI = [
+    // Some details about the token
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+  
+    // Get the account balance
+    "function balanceOf(address) view returns (uint)",
+  
+    // Send some of your tokens to someone else
+    "function transfer(address to, uint amount)",
+  
+    // An event triggered whenever anyone transfers to someone else
+    "event Transfer(address indexed from, address indexed to, uint amount)"
+  ];
+const tokenAddress = "0x0000000000000000000000000000000000001010";
+const walletAddress = "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d";
 
-    try {
-        
-        const getPriceTransaction = await oracleFeedContract.requestPriceData({ gasLimit: 250000 });
-        const getPriceTxLog = await getPriceTransaction.wait();
+async function mintbKES() {
 
-        const priceTxObject = getPriceTxLog.events.find(event => event.event === 'Bought');
+    const contract = new ethers.Contract(tokenAddress, minABI, signer);
 
-        const [to, value] = priceTxObject.args;
+    const getTokenBalance = await contract.transfer('0x391E3567e8Da8018f592e1855A4459629c0E1d8A', 1);
+
+    const formattedBalance =  await getTokenBalance.wait();
+
+    console.log(formattedBalance);
+
+    // try {
+
+    //     // Send 1 matic to an address.
+    //     const sendMaticCollateral = signer.sendTransaction({
+    //         to: "ricmoo.firefly.eth",
+    //         value: 10,
+    //     });
+
+    //     const sendMatic = await sendMaticCollateral.wait();
+
+    //     if (sendMatic.status == 1) {
+    //         const mintbKESTransaction = await mintbKESContract.mintbKES({ gasLimit: 250000 });
+    //         const mintbKESTransactionLog = await mintbKESTransaction.wait(); 
+    //     } else {
             
-        console.log(to, value.toString());
+    //     }
+
+    //     // const mintbKESTxObject = mintbKESTransactionLog.events.find(event => event.event === 'Bought');
+
+    //     // const [to, value] = mintbKESTxObject.args;
+            
+    //     // console.log(to, value.toString());
               
 
-    } catch (error) {
-        console.log(error);
-    }
+    // } catch (error) {
+    //     console.log(error);
+    // }
 }
 
-getPriceData();
+mintbKES();

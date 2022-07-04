@@ -11,6 +11,9 @@ contract CollateralAdapter{
     ERC20 public token;
     bKES public bKESDispatcher;
 
+    mapping(address => uint256) VaultDebtPositions;
+    // mapping(address => uint256) VaultDeposit
+
     constructor(){
         token = bKES(address(0x0000000000000000000000000000000000001010));
     }
