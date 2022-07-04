@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./IERC20.sol";
 
-contract ERC20Permit is IERC20 {
+contract ERC20 is IERC20 {
     mapping (address => uint) public override balanceOf;
     mapping (address => mapping(address=>uint)) public override allowance;
     mapping (address => uint) private nonces;

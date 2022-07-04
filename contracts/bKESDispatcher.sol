@@ -1,19 +1,17 @@
 /// SPDX-License-Identifier:MIT
 pragma solidity ^0.8.0;
 
-import {ERC20Permit} from "./ERC20.sol";
-import "./oraclePriceFeed.sol";
+import { ERC20 } from "./ERC20.sol";
 
-contract bKES is ERC20Permit{
+contract bKES is ERC20{
 
     address private owner;
-    ERC20Permit token;
-    APIConsumer priceFeed;
+    ERC20 token;
 
     event Mint(address account, uint256 amount);
     event Burn(address account, uint256 amount);
 
-    constructor() ERC20Permit("BitKES", "bKES"){}
+    constructor() ERC20("BitKES", "bKES"){}
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Unauthorized address");
@@ -21,18 +19,12 @@ contract bKES is ERC20Permit{
     }
 
     function mintbKES(address account, uint256 _amount) external onlyOwner {
-
-        uint256 currentMATICKSHPrice = priceFeed.price();
-
-        uint256 collateralValue = currentMATICKSHPrice * _amount;
-
-        uint bKESDeposit = (collateralValue * 100) / 65;
         
-        mint(account, bKESDeposit);
+        mint(account, _amount);
 
-        totalSupply += bKESDeposit;
+        totalSupply += _amount;
 
-        emit Mint(account, bKESDeposit);
+        emit Mint(account, _amount);
     }
 
     function burnbKES(address account, uint256 _amount) external onlyOwner{
