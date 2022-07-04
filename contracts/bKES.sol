@@ -7,7 +7,6 @@ import "./oraclePriceFeed.sol";
 contract bKES is ERC20Permit{
 
     address private owner;
-    // uint256 totalSupply;
     ERC20Permit token;
     APIConsumer priceFeed;
 
@@ -25,9 +24,9 @@ contract bKES is ERC20Permit{
 
         uint256 currentMATICKSHPrice = priceFeed.price();
 
-        uint256 cValue = currentMATICKSHPrice * _amount;
+        uint256 collateralValue = currentMATICKSHPrice * _amount;
 
-        uint bKESDeposit = (cValue * 100) / 65;
+        uint bKESDeposit = (collateralValue * 100) / 65;
         
         mint(account, bKESDeposit);
 
