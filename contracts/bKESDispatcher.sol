@@ -18,7 +18,7 @@ contract bKES is ERC20{
         _;
     }
 
-    function mintbKES(address account, uint256 _amount) external onlyOwner {
+    function mintbKES(address account, uint256 _amount) external {
         
         mint(account, _amount);
 
@@ -27,7 +27,7 @@ contract bKES is ERC20{
         emit Mint(account, _amount);
     }
 
-    function burnbKES(address account, uint256 _amount) external onlyOwner{
+    function burnbKES(address account, uint256 _amount) external {
         burn(account, _amount);
 
         totalSupply -= _amount;

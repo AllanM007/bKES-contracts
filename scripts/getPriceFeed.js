@@ -22,7 +22,7 @@ const gas_limit = "0x100000";
 
 // Contract
 const mintbKESContract = new ethers.Contract(
-  "0x1b0bE1E7E37624F94b3FB70D49119d265555E8fC",
+  "0x54B649fF50ed97311125e3BE21E3BA47463ec9c6",
   mintContract.abi,
   signer
 );
