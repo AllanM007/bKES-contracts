@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const oraclePriceFeed = await hre.ethers.getContractFactory("bKES");
-  const oraclePriceFeedContract = await oraclePriceFeed.deploy();
+  const CollateralAdapter = await hre.ethers.getContractFactory("CollateralAdapter");
+  const CollateralAdapterContract = await CollateralAdapter.deploy();
 
-  await oraclePriceFeedContract.deployed();
+  await CollateralAdapterContract.deployed();
 
-  console.log("bKES deployed to:", oraclePriceFeedContract.address);
+  console.log("CollateralAdapter deployed to:", CollateralAdapterContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
