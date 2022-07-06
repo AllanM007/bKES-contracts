@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const bKES = await hre.ethers.getContractFactory("bKES");
-  const bKESContract = await bKES.deploy();
+  const oraclePriceFeed = await hre.ethers.getContractFactory("bKES");
+  const oraclePriceFeedContract = await oraclePriceFeed.deploy();
 
-  await bKESContract.deployed();
+  await oraclePriceFeedContract.deployed();
 
-  console.log("bKES deployed to:", bKESContract.address);
+  console.log("bKES deployed to:", oraclePriceFeedContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
