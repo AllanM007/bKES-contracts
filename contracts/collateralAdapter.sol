@@ -26,8 +26,11 @@ contract CollateralAdapter{
         // get MATIC-KES Exchange rate
         uint256 currentMATICKSHPrice = priceFeed.price();
 
+        // convert MATIC-KES price to uint
+        uint fmtPrice = (currentMATICKSHPrice / 10**10);
+
         // calculate total colateral value in kes
-        uint256 collateralValue = currentMATICKSHPrice * _amount;
+        uint256 collateralValue = fmtPrice * _amount;
 
         //get 2/3 value of collateral deposit to transfer to user wallet as bKES
         uint bKESDeposit = (collateralValue * 65) / 100;
