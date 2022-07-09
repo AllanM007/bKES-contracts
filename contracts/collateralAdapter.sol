@@ -12,36 +12,37 @@ contract CollateralAdapter{
     bKES public bKESDispatcher;
 
     mapping(address => uint256) VaultDebtPositions;
+    mapping(address => uint256) ActiveDebtAmount;
     // mapping(address => uint256) VaultDeposit
 
     constructor(){
-        token = bKES(address(0x0000000000000000000000000000000000001010));
+        // token = bKES(address(0x0000000000000000000000000000000000001010));
     }
 
-    event SuccesfulERC20Deposit(address account, uint256 amount);
+    event SuccesfulERC20Valuation(address account, uint256 amount);
     event SuccesfulERC20Withdrawal(address account, uint256 amount);
 
-    function erc20Deposit(address _account, uint256 _amount) public returns(bool){
+    function depositTokenCollateral(address _account, uint256 _amount) public returns(uint256){
 
         // get MATIC-KES Exchange rate
         uint256 currentMATICKSHPrice = priceFeed.price();
 
-        // convert MATIC-KES price to uint
-        uint fmtPrice = (currentMATICKSHPrice / 10**10);
-
         // calculate total colateral value in kes
-        uint256 collateralValue = fmtPrice * _amount;
+        uint256 collateralValue = currentMATICKSHPrice * _amount;
 
         //get 2/3 value of collateral deposit to transfer to user wallet as bKES
-        uint bKESDeposit = (collateralValue * 65) / 100;
+        uint256 bKESVal = collateralValue * 65 / 100;
 
-        bKESDispatcher.mintbKES(_account, bKESDeposit);
+        // convert bKES price to 18 decimal places ERC20 standard for mminting
+        uint256 bKESDeposit = bKESVal / 10**6;
 
-        emit SuccesfulERC20Deposit(_account, _amount);
-        return true;
+        // bKESDispatcher.mintbKES(_account, bKESDeposit);
+
+        emit SuccesfulERC20Valuation(_account, bKESDeposit);
+        return bKESDeposit;
     }
 
-    function erc20Withdrawal(address _account, uint256 _amount) public returns(bool){
+    function withdrawTokenCollateral(address _account, uint256 _amount) public returns(bool){
 
         // revert bKES back to collateral value
         uint256 collateralWithdrawal = (_amount * 100) / 65;
