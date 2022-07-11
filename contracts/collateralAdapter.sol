@@ -64,4 +64,6 @@ contract CollateralAdapter{
 
     function checkERC20Deposit() public {}
 
+    function calculateHealthFactor() public returns(uint){}
+
 }

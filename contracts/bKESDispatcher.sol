@@ -32,7 +32,9 @@ contract bKES is ERC20{
 
         totalSupply += _amount;
 
-        collateralAdapt.ActiveDebtAmount(account) += _amount;
+        uint currentDebt = collateralAdapt.ActiveDebtAmount(account);
+        
+        currentDebt += _amount;
 
         emit Mint(account, _amount);
     }
