@@ -11,9 +11,9 @@ contract CollateralAdapter{
     ERC20 public token;
     bKES public bKESDispatcher;
 
-    mapping(address => uint256) VaultDebtPositions;
-    mapping(address => uint256) ActiveDebtAmount;
-    // mapping(address => uint256) VaultDeposit
+    mapping(address => uint256) public Vault;
+    mapping(address => uint256) public ActiveDebtAmount;
+    mapping(address => mapping(uint256 => uint256)) public HealthFactor;
 
     constructor(){
         // token = bKES(address(0x0000000000000000000000000000000000001010));
@@ -22,7 +22,7 @@ contract CollateralAdapter{
     event SuccesfulERC20Valuation(address account, uint256 amount);
     event SuccesfulERC20Withdrawal(address account, uint256 amount);
 
-    function depositTokenCollateral(address _account, uint256 _amount) public returns(uint256){
+    function collateralValuation(address _account, uint256 _amount) public payable returns(uint256){
 
         // get MATIC-KES Exchange rate
         uint256 currentMATICKSHPrice = priceFeed.price();
@@ -36,6 +36,9 @@ contract CollateralAdapter{
         // convert bKES price to 18 decimal places ERC20 standard for mminting
         uint256 bKESDeposit = bKESVal / 10**6;
 
+        //update user's Vault balance
+        Vault[_account] += _amount;
+
         // bKESDispatcher.mintbKES(_account, bKESDeposit);
 
         emit SuccesfulERC20Valuation(_account, bKESDeposit);
@@ -45,7 +48,7 @@ contract CollateralAdapter{
     function withdrawTokenCollateral(address _account, uint256 _amount) public returns(bool){
 
         // revert bKES back to collateral value
-        uint256 collateralWithdrawal = (_amount * 100) / 65;
+        uint256 collateralWithdrawal = _amount * 100 / 65;
         
         // transfer collateral back to the user's wallet
         token.transferFrom(address(this), msg.sender, collateralWithdrawal);
@@ -56,6 +59,8 @@ contract CollateralAdapter{
         emit SuccesfulERC20Withdrawal(_account, _amount);
         return true;
     }
+
+    function depositbKES(address _account, uint _amount) external payable returns(bool){}
 
     function checkERC20Deposit() public {}
 
