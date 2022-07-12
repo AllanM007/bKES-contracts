@@ -77,7 +77,7 @@ async function mintbKES(collateralValue) {
         if (collateralPrice > 0) {
           const mintbKEStx = await mintbKESContract.erc20Deposit(
             walletAddress,
-            100,
+            collateralValue,
             { gasLimit: 50000 }
           );
 
@@ -108,38 +108,4 @@ async function mintbKES(collateralValue) {
   }
 }
 
-async function testMintbKES(collateralValue) {
-  const gasPrice = await alchemyProvider.getGasPrice();
-
-  const formattedGasPrice = gasPrice.toString();
-
-  console.log(formattedGasPrice);
-
-  try {
-    const mintbKEStx = await mintbKESContract.erc20Deposit(
-      walletAddress,
-      collateralValue,
-      { gasLimit: 50000 }
-    );
-
-    console.log(mintbKEStx);
-
-    const mintbKESObject = await mintbKEStx.wait();
-
-    console.log(mintbKESObject);
-
-    const depositObject = mintbKESObject.events.find(
-      (event) => event.event === "SuccesfulERC20Deposit"
-    );
-
-    const [to, value] = depositObject.args;
-
-    console.log(to, value.toString());
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-testMintbKES(100);
-
-// mintbKES(1);
+mintbKES(100);
