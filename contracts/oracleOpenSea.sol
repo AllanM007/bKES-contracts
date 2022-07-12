@@ -33,13 +33,14 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
      * Create a Chainlink request to retrieve API response, find the target price
      * data, then multiply by 100 (to remove decimal places from price).
      */
-    function requestNFTPrice() public returns (bytes32 requestId) 
+    function requestNFTPrice(string memory nftAddressEndpoint) public returns (bytes32 requestId) 
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
         
         // Set the URL to perform the GET request on
         // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return. 
-        request.add("get", "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=MATIC&to_currency=KES&apikey=S9UBDOMOL97X8F1I");
+        request.add("get",
+         nftAddressEndpoint);
         
         // Set the path to find the desired data in the API response, where the response format is:
         // {
@@ -56,8 +57,9 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         //     }
         //     }
         string[] memory path = new string[](2);
-        path[0] = "Realtime Currency Exchange Rate";
-        path[1] = "5. Exchange Rate";
+        path[0] = "collection";
+        path[1] = "stats";
+        path[2] = "";
         request.addStringArray("path", path);
         
         // Multiply the result by 10000000000 to remove decimals
