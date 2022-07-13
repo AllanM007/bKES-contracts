@@ -25,10 +25,10 @@ contract CollateralAdapter{
     event successfulbKESMint(address account, uint amount);
     event successfulbKESBurn(address account, uint amount);
 
-    function collateralValuation(address _account, uint256 _amount) public payable returns(uint256){
+    function collateralValuation(address _account, uint256 _amount) public returns(uint256){
 
         // get MATIC-KES Exchange rate
-        uint256 currentMATICKSHPrice = priceFeed.price();
+        uint256 currentMATICKSHPrice = 613010000000; // priceFeed.price();
 
         // calculate total colateral value in kes
         uint256 collateralValue = currentMATICKSHPrice * _amount;
@@ -46,7 +46,7 @@ contract CollateralAdapter{
         return bKESDeposit;
     }
 
-    function withdrawTokenCollateral(address _account, uint256 _amount) public returns(bool){
+    function withdrawTokenCollateral(address _account, uint _amount) public returns(uint){
 
         // revert bKES back to collateral value
         uint256 collateralWithdrawal = _amount * 100 / 65;
@@ -58,12 +58,8 @@ contract CollateralAdapter{
         bKESDispatcher.burnbKES(_account, _amount);
 
         emit SuccesfulERC20Withdrawal(_account, _amount);
-        return true;
+        return _amount;
     }
-
-    function depositbKES(address _account, uint _amount) external payable returns(bool){}
-
-    function checkERC20Deposit() public {}
 
     function calculateHealthFactor() public returns(uint){}
 

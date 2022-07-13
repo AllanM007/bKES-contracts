@@ -29,9 +29,9 @@ const oracleContract = new ethers.Contract(
   signer
 );
 
-// Minting Contract
-const mintbKESContract = new ethers.Contract(
-  "0x303B498874a2Bb86987324EFb355188f9FE6FD32",
+// Collateral Contract
+const collateralAdapterContract = new ethers.Contract(
+  collateralAdapter,
   collateralAdapterABI.abi,
   signer
 );
@@ -39,73 +39,111 @@ const mintbKESContract = new ethers.Contract(
 const MaticAddress = "0x0000000000000000000000000000000000001010";
 const walletAddress = "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d";
 
-async function mintbKES(collateralValue) {
+// async function mintbKES(collateralValue) {
+//   const gasPrice = await alchemyProvider.getGasPrice();
+
+//   const formattedGasPrice = gasPrice.toString();
+
+//   console.log(formattedGasPrice);
+
+//   try {
+//     const sendCollateraltx = {
+//       from: walletAddress,
+//       to: "0x391E3567e8Da8018f592e1855A4459629c0E1d8A",
+//       value: collateralValue, //ethers.utils.parseEther(send_token_amount),
+//       nonce: alchemyProvider.getTransactionCount(walletAddress, "latest"),
+//       gasLimit: ethers.utils.hexlify(gas_limit), // 100000
+//       gasPrice: ethers.utils.hexlify(gasPrice),
+//     };
+
+//     const tokenTransfer = await signer.sendTransaction(sendCollateraltx);
+
+//     const transferObject = await tokenTransfer.wait();
+
+//     console.log(transferObject);
+
+//     if (transferObject.status == 1) {
+//       const getCollateralPrice = await oracleContract.requestMATICKESPrice();
+
+//       const collateralPriceTx = await getCollateralPrice.wait();
+
+//       console.log(collateralPriceTx);
+
+//       if (collateralPriceTx.status == 1) {
+//         const collateralPrice = 0;
+
+//         setTimeout((collateralPrice = await oracleContract.price()), 30000);
+
+//         if (collateralPrice > 0) {
+//           const mintbKEStx = await mintbKESContract.erc20Deposit(
+//             walletAddress,
+//             collateralValue,
+//             { gasLimit: 50000 }
+//           );
+
+//           console.log(mintbKEStx);
+
+//           const mintbKESObject = await mintbKEStx.wait();
+
+//           console.log(mintbKESObject);
+
+//           const depositObject = mintbKESObject.events.find(
+//             (event) => event.event === "SuccesfulERC20Deposit"
+//           );
+
+//           const [to, value] = depositObject.args;
+
+//           console.log(to, value.toString());
+//         } else {
+//           console.log("invalid collateral value");
+//         }
+//       } else {
+//         console.log("invalid MATICKES price");
+//       }
+//     } else {
+//       console.log("transaction failed");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+async function testMintbKES(collateralValue) {
   const gasPrice = await alchemyProvider.getGasPrice();
 
   const formattedGasPrice = gasPrice.toString();
 
   console.log(formattedGasPrice);
 
-  try {
-    const sendCollateraltx = {
-      from: walletAddress,
-      to: "0x391E3567e8Da8018f592e1855A4459629c0E1d8A",
-      value: collateralValue, //ethers.utils.parseEther(send_token_amount),
-      nonce: alchemyProvider.getTransactionCount(walletAddress, "latest"),
-      gasLimit: ethers.utils.hexlify(gas_limit), // 100000
-      gasPrice: ethers.utils.hexlify(gasPrice),
-    };
+  const collateralPrice = await oracleContract.price()
 
-    const tokenTransfer = await signer.sendTransaction(sendCollateraltx);
+  console.log(collateralPrice.toString());
 
-    const transferObject = await tokenTransfer.wait();
+  // try {
+  //   const collateralAdaptertx = await collateralAdapterContract.connect(signer).collateralValuation(
+  //     walletAddress,
+  //     collateralValue,
+  //     { gasLimit: 50000 }
+  //   );
 
-    console.log(transferObject);
+  //   console.log(collateralAdaptertx);
 
-    if (transferObject.status == 1) {
-      const getCollateralPrice = await oracleContract.requestMATICKESPrice();
+  //   const collateralAdapterObject = await collateralAdaptertx.wait();
 
-      const collateralPriceTx = await getCollateralPrice.wait();
+  //   console.log(collateralAdapterObject);
 
-      console.log(collateralPriceTx);
+  //   const valuationObject = collateralAdapterObject.events.find(
+  //     (event) => event.event === "SuccesfulERC20Valuation"
+  //   );
 
-      if (collateralPriceTx.status == 1) {
-        const collateralPrice = 0;
+  //   const [to, value] = valuationObject.args;
 
-        setTimeout((collateralPrice = await oracleContract.price()), 30000);
-
-        if (collateralPrice > 0) {
-          const mintbKEStx = await mintbKESContract.erc20Deposit(
-            walletAddress,
-            collateralValue,
-            { gasLimit: 50000 }
-          );
-
-          console.log(mintbKEStx);
-
-          const mintbKESObject = await mintbKEStx.wait();
-
-          console.log(mintbKESObject);
-
-          const depositObject = mintbKESObject.events.find(
-            (event) => event.event === "SuccesfulERC20Deposit"
-          );
-
-          const [to, value] = depositObject.args;
-
-          console.log(to, value.toString());
-        } else {
-          console.log("invalid collateral value");
-        }
-      } else {
-        console.log("invalid MATICKES price");
-      }
-    } else {
-      console.log("transaction failed");
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  //   console.log(to, value.toString());
+  // } catch (error) {
+  //   console.log(error);
+  // }
 }
 
-mintbKES(100);
+testMintbKES(100);
+
+// mintbKES(100);
