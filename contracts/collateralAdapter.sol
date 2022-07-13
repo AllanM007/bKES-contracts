@@ -22,6 +22,9 @@ contract CollateralAdapter{
     event SuccesfulERC20Valuation(address account, uint256 amount);
     event SuccesfulERC20Withdrawal(address account, uint256 amount);
 
+    event successfulbKESMint(address account, uint amount);
+    event successfulbKESBurn(address account, uint amount);
+
     function collateralValuation(address _account, uint256 _amount) public payable returns(uint256){
 
         // get MATIC-KES Exchange rate
@@ -36,10 +39,8 @@ contract CollateralAdapter{
         // convert bKES price to 18 decimal places ERC20 standard for mminting
         uint256 bKESDeposit = bKESVal / 10**6;
 
-        //update user's Vault balance
-        Vault[_account] += _amount;
-
-        // bKESDispatcher.mintbKES(_account, bKESDeposit);
+        //update user's bKES Vault balance
+        Vault[_account] += bKESDeposit;
 
         emit SuccesfulERC20Valuation(_account, bKESDeposit);
         return bKESDeposit;
@@ -65,5 +66,23 @@ contract CollateralAdapter{
     function checkERC20Deposit() public {}
 
     function calculateHealthFactor() public returns(uint){}
+
+    function initiateMint(address _account, uint _amount) public returns(bool){
+        uint VaultAmount = Vault[_account];
+
+        require( VaultAmount > _amount, "Cannot mint more than vault amount");
+
+        bKESDispatcher.mintbKES(_account, _amount);
+
+        emit successfulbKESMint(_account, _amount);
+
+        uint currentDebt = ActiveDebtAmount[_account];
+        
+        currentDebt += _amount;
+
+        return true;
+    }
+
+    function initiateBurn(address _account, uint _amount) public returns(bool){}
 
 }
