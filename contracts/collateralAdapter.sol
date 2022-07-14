@@ -5,11 +5,11 @@ import { bKES } from "./bKESDispatcher.sol";
 import { ERC20 } from "./ERC20.sol";
 import { APIConsumer } from "./oraclePriceFeed.sol";
 
-contract CollateralAdapter{
+contract CollateralAdapter is ERC20, bKES, APIConsumer{
     
-    APIConsumer public priceFeed;
-    ERC20 public token;
-    bKES public bKESDispatcher;
+    APIConsumer oracleContract = new APIConsumer();
+    // ERC20 public token;
+    bKES bKESContract = new bKES();
 
     mapping(address => uint256) public Vault;
     mapping(address => uint256) public ActiveDebtAmount;
@@ -28,7 +28,7 @@ contract CollateralAdapter{
     function collateralValuation(address _account, uint256 _amount) public returns(uint256){
 
         // get MATIC-KES Exchange rate
-        uint256 currentMATICKSHPrice = 613010000000; // priceFeed.price();
+        uint256 currentMATICKSHPrice = APIConsumer.price; // priceFeed.price();
 
         // calculate total colateral value in kes
         uint256 collateralValue = currentMATICKSHPrice * _amount;
@@ -55,7 +55,7 @@ contract CollateralAdapter{
         token.transferFrom(address(this), msg.sender, collateralWithdrawal);
 
         // burn bKES token to remove them from circulation
-        bKESDispatcher.burnbKES(_account, _amount);
+        bKESContract.burnbKES(_account, _amount);
 
         emit SuccesfulERC20Withdrawal(_account, _amount);
         return _amount;
@@ -68,7 +68,11 @@ contract CollateralAdapter{
 
         require( VaultAmount > _amount, "Cannot mint more than vault amount");
 
-        bKESDispatcher.mintbKES(_account, _amount);
+        bKESContract.mintbKES(_account, _amount);
+
+        uint newVaultBalance = VaultAmount - _amount;
+
+        Vault[_account] = newVaultBalance;
 
         emit successfulbKESMint(_account, _amount);
 

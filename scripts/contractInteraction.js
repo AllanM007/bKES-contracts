@@ -119,29 +119,29 @@ async function testMintbKES(collateralValue) {
 
   console.log(collateralPrice.toString());
 
-  // try {
-  //   const collateralAdaptertx = await collateralAdapterContract.connect(signer).collateralValuation(
-  //     walletAddress,
-  //     collateralValue,
-  //     { gasLimit: 50000 }
-  //   );
+  try {
+    const collateralAdaptertx = await collateralAdapterContract.connect(signer).initiateMint(
+      walletAddress,
+      collateralValue,
+      { gasLimit: 50000 }
+    );
 
-  //   console.log(collateralAdaptertx);
+    console.log(collateralAdaptertx);
 
-  //   const collateralAdapterObject = await collateralAdaptertx.wait();
+    const collateralAdapterObject = await collateralAdaptertx.wait();
 
-  //   console.log(collateralAdapterObject);
+    console.log(collateralAdapterObject);
 
-  //   const valuationObject = collateralAdapterObject.events.find(
-  //     (event) => event.event === "SuccesfulERC20Valuation"
-  //   );
+    const valuationObject = collateralAdapterObject.events.find(
+      (event) => event.event === "successfulbKESMint"
+    );
 
-  //   const [to, value] = valuationObject.args;
+    const [to, value] = valuationObject.args;
 
-  //   console.log(to, value.toString());
-  // } catch (error) {
-  //   console.log(error);
-  // }
+    console.log(to, value.toString());
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 testMintbKES(100);

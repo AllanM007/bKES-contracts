@@ -13,10 +13,10 @@ contract bKES is ERC20{
 
     constructor() ERC20("BitKES", "bKES"){}
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Unauthorized address");
-        _;
-    }
+    // modifier onlyOwner() {
+    //     require(msg.sender == owner, "Unauthorized address");
+    //     _;
+    // }
 
     function mintbKES(address account, uint256 _amount) external {
         
