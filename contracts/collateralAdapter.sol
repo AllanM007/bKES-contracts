@@ -3,13 +3,12 @@ pragma solidity ^0.8.0;
 
 import { bKES } from "./bKESDispatcher.sol";
 import { ERC20 } from "./ERC20.sol";
-import { APIConsumer } from "./oraclePriceFeed.sol";
+// import { APIConsumer } from "./oraclePriceFeed.sol";
 
-contract CollateralAdapter is ERC20, bKES, APIConsumer{
+contract CollateralAdapter is ERC20, bKES{
     
-    APIConsumer oracleContract = new APIConsumer();
-    // ERC20 public token;
     bKES bKESContract = new bKES();
+    uint256 public collateralPrice;
 
     mapping(address => uint256) public Vault;
     mapping(address => uint256) public ActiveDebtAmount;
@@ -25,18 +24,15 @@ contract CollateralAdapter is ERC20, bKES, APIConsumer{
     event successfulbKESMint(address account, uint amount);
     event successfulbKESBurn(address account, uint amount);
 
-    function collateralValuation(address _account, uint256 _amount) public returns(uint256){
-
-        // get MATIC-KES Exchange rate
-        uint256 currentMATICKSHPrice = APIConsumer.price; // priceFeed.price();
+    function collateralValuation(address _account, uint256 _amount, uint256 _collateralPrice) public returns(uint256){
 
         // calculate total colateral value in kes
-        uint256 collateralValue = currentMATICKSHPrice * _amount;
+        uint256 collateralValue = _collateralPrice * _amount;
 
         //get 2/3 value of collateral deposit to transfer to user wallet as bKES
         uint256 bKESVal = collateralValue * 65 / 100;
 
-        // convert bKES price to 18 decimal places ERC20 standard for mminting
+        // convert bKES price to 18 decimal places ERC20 standard for minting
         uint256 bKESDeposit = bKESVal / 10**6;
 
         //update user's bKES Vault balance
@@ -70,11 +66,11 @@ contract CollateralAdapter is ERC20, bKES, APIConsumer{
 
         bKESContract.mintbKES(_account, _amount);
 
+        emit successfulbKESMint(_account, _amount);
+
         uint newVaultBalance = VaultAmount - _amount;
 
         Vault[_account] = newVaultBalance;
-
-        emit successfulbKESMint(_account, _amount);
 
         uint currentDebt = ActiveDebtAmount[_account];
         

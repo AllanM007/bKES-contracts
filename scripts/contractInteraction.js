@@ -117,12 +117,16 @@ async function testMintbKES(collateralValue) {
 
   const collateralPrice = await oracleContract.price()
 
-  console.log(collateralPrice.toString());
+  const fmtCollateralPrice = collateralPrice.toString();
+
+  console.log(fmtCollateralPrice);
 
   try {
-    const collateralAdaptertx = await collateralAdapterContract.connect(signer).initiateMint(
+
+    const collateralAdaptertx = await collateralAdapterContract.connect(signer).collateralValuation(
       walletAddress,
       collateralValue,
+      fmtCollateralPrice,
       { gasLimit: 50000 }
     );
 
@@ -133,7 +137,7 @@ async function testMintbKES(collateralValue) {
     console.log(collateralAdapterObject);
 
     const valuationObject = collateralAdapterObject.events.find(
-      (event) => event.event === "successfulbKESMint"
+      (event) => event.event === "SuccesfulERC20Valuation"
     );
 
     const [to, value] = valuationObject.args;
