@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import { bKES } from "./bKESDispatcher.sol";
 import { ERC20 } from "./ERC20.sol";
-// import { APIConsumer } from "./oraclePriceFeed.sol";
 
 contract CollateralAdapter is ERC20, bKES{
     
@@ -47,7 +46,7 @@ contract CollateralAdapter is ERC20, bKES{
         uint256 collateralWithdrawal = _amount * 100 / 65;
         
         // transfer collateral back to the user's wallet
-        ERC20(collateralAddress).transferFrom(address(this), _account, collateralWithdrawal);
+        bKES(collateralAddress).transferFrom(address(this), _account, collateralWithdrawal);
 
         // burn bKES token to remove them from circulation
         bKESContract.burnbKES(_account, _amount);
@@ -56,7 +55,7 @@ contract CollateralAdapter is ERC20, bKES{
         return true;
     }
 
-    function calculateHealthFactor(address _account, uint256 collateralPrice) public view returns(uint256){
+    function calculateHealthFactor(address _account, uint256 collateralPrice) public returns(uint256){
 
         uint256 currentDebt = ActiveDebtAmount[_account];
 
@@ -65,6 +64,9 @@ contract CollateralAdapter is ERC20, bKES{
         uint256 collateralValue = collateralAmount * collateralPrice;
 
         uint256 debtRatio = currentDebt / collateralValue * 100;
+
+        HealthFactor[_account] = debtRatio;
+
         return debtRatio;
     }
 
