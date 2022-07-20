@@ -108,7 +108,7 @@ const walletAddress = "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d";
 //   }
 // }
 
-async function testMintbKES(collateralValue) {
+async function testCollateralValuation(collateralValue) {
   const gasPrice = await alchemyProvider.getGasPrice();
 
   const formattedGasPrice = gasPrice.toString();
@@ -143,6 +143,43 @@ async function testMintbKES(collateralValue) {
     const [to, value] = valuationObject.args;
 
     console.log(to, value.toString());
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function testMintbKES(mintAmount) {
+  const gasPrice = await alchemyProvider.getGasPrice();
+
+  const formattedGasPrice = gasPrice.toString();
+
+  console.log(formattedGasPrice);
+
+  try {
+
+    const vaultAmount = await collateralAdapterContract.connect(signer).ActiveDebtAmount(walletAddress);
+
+    console.log(vaultAmount.toString());
+
+    // const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
+    //   walletAddress,
+    //   mintAmount,
+    //   { gasLimit: 100000 }
+    // );
+
+    // console.log(mintbKEStx);
+
+    // const mintbKESObject = await mintbKEStx.wait();
+
+    // console.log(mintbKESObject);
+
+    // const mintObject = mintbKESObject.events.find(
+    //   (event) => event.event === "successfulbKESMint"
+    // );
+
+    // const [to, value] = mintObject.args;
+
+    // console.log(to, value.toString());
   } catch (error) {
     console.log(error);
   }
