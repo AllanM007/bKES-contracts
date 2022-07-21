@@ -39,7 +39,7 @@ const collateralAdapterContract = new ethers.Contract(
 const MaticAddress = "0x0000000000000000000000000000000000001010";
 const walletAddress = "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d";
 
-// async function mintbKES(collateralValue) {
+// async function collateralValuation(collateralValue) {
 //   const gasPrice = await alchemyProvider.getGasPrice();
 
 //   const formattedGasPrice = gasPrice.toString();
@@ -157,34 +157,34 @@ async function testMintbKES(mintAmount) {
 
   try {
 
-    const vaultAmount = await collateralAdapterContract.connect(signer).ActiveDebtAmount(walletAddress);
+    // const vaultAmount = await collateralAdapterContract.connect(signer).ActiveDebtAmount(walletAddress);
 
-    console.log(vaultAmount.toString());
+    // console.log(vaultAmount.toString());
 
-    // const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
-    //   walletAddress,
-    //   mintAmount,
-    //   { gasLimit: 100000 }
-    // );
+    const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
+      walletAddress,
+      mintAmount,
+      { gasLimit: 100000 }
+    );
 
-    // console.log(mintbKEStx);
+    console.log(mintbKEStx);
 
-    // const mintbKESObject = await mintbKEStx.wait();
+    const mintbKESObject = await mintbKEStx.wait();
 
-    // console.log(mintbKESObject);
+    console.log(mintbKESObject);
 
-    // const mintObject = mintbKESObject.events.find(
-    //   (event) => event.event === "successfulbKESMint"
-    // );
+    const mintObject = mintbKESObject.events.find(
+      (event) => event.event === "successfulbKESMint"
+    );
 
-    // const [to, value] = mintObject.args;
+    const [to, value] = mintObject.args;
 
-    // console.log(to, value.toString());
+    console.log(to, value.toString());
   } catch (error) {
     console.log(error);
   }
 }
 
-testMintbKES(100);
+// testMintbKES(100);
 
-// mintbKES(100);
+testCollateralValuation(100);
