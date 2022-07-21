@@ -105,5 +105,15 @@ contract CollateralAdapter is ERC20, bKES{
 
         return true;
     }
+    
+    function liquidatePosition(address _owner, address _liquidator, uint256 _amount) public returns(bool){
+        require(85 >=HealthFactor[_owner], "Position still valid");
+
+        uint256 newVault = ActiveDebtAmount[_owner] - _amount;
+
+        ActiveDebtAmount[_owner] = newVault;
+
+        return true;
+    }
 
 }

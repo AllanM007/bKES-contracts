@@ -3,24 +3,24 @@ const app = express();
 const path = require('path');
 const router = express.Router();
 
-router.get('/',function(req,res){
+router.get('/', function(req,res){
   res.sendFile(path.join(__dirname+'/index.html'));
   //__dirname : It will resolve to your project folder.
 });
 
-router.get('/mint',function(req,res){
-  res.sendFile(path.join(__dirname+'/mint.html'));
-});
-
-router.get('/transfer',function(req,res){
+router.get('/transfer', function(req,res){
   res.sendFile(path.join(__dirname+'/transfer.html'));
 });
 
-router.get('/burn',function(req,res){
+router.get('/mint', function(req,res){
+  res.sendFile(path.join(__dirname+'/mint.html'));
+});
+
+router.get('/burn', function(req,res){
   res.sendFile(path.join(__dirname+'/burn.html'));
 });
 
-router.get('/sitemap',function(req,res){
+router.get('/debtPosition', function(req,res){
   res.sendFile(path.join(__dirname+'/debtPositions.html'));
 });
 
