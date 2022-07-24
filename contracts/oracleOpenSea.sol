@@ -39,8 +39,7 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         
         // Set the URL to perform the GET request on
         // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return. 
-        request.add("get",
-         nftAddressEndpoint);
+        request.add("get", nftAddressEndpoint);
         
         // Set the path to find the desired data in the API response, where the response format is:
         // {
