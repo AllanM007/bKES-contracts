@@ -1,7 +1,7 @@
 <h1 align="center">Welcome to bKES 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
-  <a href="https://github.com/AllanM007/bKES-contracts/#dos" target="_blank">
+  <a href="https://github.com/AllanM007/bKES-contracts/#docs" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="#" target="_blank">
@@ -12,7 +12,7 @@
   </a>
 </p>
 
-> Stablecoin Lending Protocol
+> bKES is a lending/stablecoin protocol on Polygon that accepted MATIC/USDC and OpenSea NFTs as collateral when a user creates a debt position and minted bKES(an overcollateralized stablecoin pegged 1:1 with Kenyan Shilling). The protocol enabled precise debt-collateral ratios thanks to chainlink's API consumers and prevented negative debt positions thanks to user-incentivised liquidations on the platform by allowing anyone with MetaMask to liquidate a position whose health factor(debt-collateral ratio) is low and get a cut of the positions' collateral.
 
 ### 🏠 [Homepage](https://github.com/AllanM007/bKES-contracts)
 
