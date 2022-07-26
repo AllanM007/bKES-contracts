@@ -36,7 +36,7 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
      * Create a Chainlink request to retrieve API response, find the target price
      * data, then multiply by 100 (to remove decimal places from price).
      */
-    function requestNFTPrice(string memory nftAddressEndpoint) public returns (bytes32 requestId) 
+    function requestNFTData(string memory nftAddressEndpoint) public returns (bytes32 requestId) 
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
         
