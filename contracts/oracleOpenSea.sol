@@ -7,11 +7,14 @@ import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
 
-    uint256 public price;
+    uint256 public total_price;
+    uint256 public decimals;
+    string public payment_token;
+
     bytes32 private jobId;
     uint256 private fee;
 
-    event RequestNFTPrice(bytes32 indexed requestId, uint256 price);
+    event RequestNFTData(bytes32 indexed requestId, uint256 total_price, string payment_token, uint256 decimals);
 
     /**
      * @notice Initialize the link token and target oracle
@@ -43,22 +46,33 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         
         // Set the path to find the desired data in the API response, where the response format is:
         // {
-        //     "Realtime Currency Exchange Rate": {
-        //       "1. From_Currency Code": "BTC",
-        //       "2. From_Currency Name": "Bitcoin",
-        //       "3. To_Currency Code": "CNY",
-        //       "4. To_Currency Name": "Chinese Yuan",
-        //       "5. Exchange Rate": "207838.88814500",
-        //       "6. Last Refreshed": "2021-01-26 11:11:07",
-        //       "7. Time Zone": "UTC",
-        //      "8. Bid Price": "207838.82343000",
-        //       "9. Ask Price": "207838.88814500"
-        //     }
-        //     }
+        //   "last_sale": {
+        //     "asset": {
+        //         "decimals": null,
+        //         "token_id": "1"
+        //     },
+        //     "asset_bundle": null,
+        //     "event_type": "successful",
+        //     "event_timestamp": "2020-11-30T18:44:26",
+        //     "auction_type": null,
+        //     "total_price": "60000000000000000000",
+        //     "payment_token": {
+        //         "symbol": "ETH",
+        //         "address": "0x0000000000000000000000000000000000000000",
+        //         "image_url": "https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg",
+        //         "name": "Ether",
+        //         "decimals": 18,
+        //         "eth_price": "1.000000000000000",
+        //         "usd_price": "1097.799999999999955000"
+        //     },
+        // }
+
         string[] memory path = new string[](2);
-        path[0] = "collection";
-        path[1] = "stats";
-        path[2] = "";
+        path[0] = "last_sale";
+        path[1] = "total_price";
+        path[2] = "payment_token";
+        path[3] = "symbol";
+        path[4] = "decimals";
         request.addStringArray("path", path);
         
         // Multiply the result by 10000000000 to remove decimals
@@ -69,12 +83,14 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
     }
     
     /**
-     * Receive the response in the form of uint256
+     * Receive the response in the form
      */ 
-    function fulfill(bytes32 _requestId, uint256 _price) public recordChainlinkFulfillment(_requestId)
+    function fulfill(bytes32 _requestId, uint256 _totalPrice, string memory _paymentToken, uint256 _decimals) public recordChainlinkFulfillment(_requestId)
     {
-        price = _price;
-        emit RequestNFTPrice(_requestId, _price);
+        total_price = _totalPrice;
+        payment_token = _paymentToken;
+        decimals = _decimals;
+        emit RequestNFTData(_requestId, _totalPrice, _paymentToken, _decimals);
     }
 
     /**
