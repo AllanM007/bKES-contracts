@@ -95,33 +95,3 @@ To counteract the inflationary effects of the liquidity mining program, a simila
 ### Governance
 
 Snapshot and the stTZAR balances will be used to implement governance voting for the protocol. The voted proposals will then be actioned by the multisig in the short term.
-
-## Installation
-
-To install with [Foundry](https://github.com/gakonst/foundry):
-
-```
-forge install [user]/[repo]
-```
-
-## Local development
-
-This project uses [Foundry](https://github.com/gakonst/foundry) as the development framework.
-
-### Dependencies
-
-```
-make update
-```
-
-### Compilation
-
-```
-make build
-```
-
-### Testing
-
-```
-make test
-```
