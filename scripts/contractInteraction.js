@@ -3,9 +3,11 @@ const API_KEY = process.env.ALCHEMY_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const collateralAdapter = process.env.collateralAdapter_ADDRESS;
 const oracleAddress = process.env.oracleContract_ADDRESS;
+const openseaOracleAddress = process.env.openseaOracle_ADDRESS;
 
 const { json } = require("hardhat/internal/core/params/argumentTypes");
 const { ethers } = require("ethers");
+const openseaOracleContractABI = require("../artifacts/contracts/oracleOpenSea.sol/OpenSeaAPIConsumer.json");
 const oracleContractABI = require("../artifacts/contracts/oraclePriceFeed.sol/APIConsumer.json");
 const mintContract = require("../artifacts/contracts/bKESDispatcher.sol/bKES.json");
 const collateralAdapterABI = require("../artifacts/contracts/collateralAdapter.sol/CollateralAdapter.json");
@@ -26,6 +28,13 @@ const gas_limit = "0x100000";
 const oracleContract = new ethers.Contract(
   oracleAddress,
   oracleContractABI.abi,
+  signer
+);
+
+// OpenseaOracle Contract
+const OpenseaOracleContract = new ethers.Contract(
+  openseaOracleAddress,
+  openseaOracleContractABI.abi,
   signer
 );
 
@@ -187,4 +196,31 @@ async function testMintbKES(mintAmount) {
 
 // testMintbKES(100);
 
-testCollateralValuation(100);
+// testCollateralValuation(100);
+
+async function testOpenseaOracle(){
+  try {
+    const getNFTData = await OpenseaOracleContract.requestNFTData("https://api.opensea.io/api/v1/asset/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/1/?include_orders=false", { gasLimit: 100000 });
+    
+    const getNFTDatatx = await getNFTData.wait();
+    
+    console.log(getNFTDatatx); 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function MagicEdenOracle(){
+  try {
+    const getNFTData = await OpenseaOracleContract.requestNFTData("api-devnet.magiceden.dev/v2/tokens/HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u/listings", { gasLimit: 100000 });
+    
+    const getNFTDatatx = await getNFTData.wait();
+    
+    console.log(getNFTDatatx); 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+MagicEdenOracle();
+// testOpenseaOracle();

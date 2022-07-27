@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const CollateralAdapter = await hre.ethers.getContractFactory("CollateralAdapter");
-  const CollateralAdapterContract = await CollateralAdapter.deploy();
+  const OpenSeaAPIConsumer = await hre.ethers.getContractFactory("OpenSeaAPIConsumer");
+  const OpenSeaAPIConsumerContract = await OpenSeaAPIConsumer.deploy();
 
-  await CollateralAdapterContract.deployed();
+  await OpenSeaAPIConsumerContract.deployed();
 
-  console.log("CollateralAdapter deployed to:", CollateralAdapterContract.address);
+  console.log("OpenSeaAPIConsumer deployed to:", OpenSeaAPIConsumerContract.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

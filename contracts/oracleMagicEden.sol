@@ -4,17 +4,15 @@ pragma solidity ^0.8.0;
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
+contract MagicEdenAPIConsumer is ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
 
     uint256 public total_price;
-    uint256 public decimals;
-    string public payment_token;
 
     bytes32 private jobId;
     uint256 private fee;
 
-    event RequestNFTData(bytes32 indexed requestId, uint256 total_price);
+    event RequestMagicEdenNFTData(bytes32 indexed requestId, uint256 total_price);
 
     /**
      * @notice Initialize the link token and target oracle
@@ -43,29 +41,6 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         // Set the URL to perform the GET request on
         // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return. 
         request.add("get", nftAddressEndpoint);
-        
-        // Set the path to find the desired data in the API response, where the response format is:
-        // {
-        //   "last_sale": {
-        //     "asset": {
-        //         "decimals": null,
-        //         "token_id": "1"
-        //     },
-        //     "asset_bundle": null,
-        //     "event_type": "successful",
-        //     "event_timestamp": "2020-11-30T18:44:26",
-        //     "auction_type": null,
-        //     "total_price": "60000000000000000000",
-        //     "payment_token": {
-        //         "symbol": "ETH",
-        //         "address": "0x0000000000000000000000000000000000000000",
-        //         "image_url": "https://openseauserdata.com/files/6f8e2979d428180222796ff4a33ab929.svg",
-        //         "name": "Ether",
-        //         "decimals": 18,
-        //         "eth_price": "1.000000000000000",
-        //         "usd_price": "1097.799999999999955000"
-        //     },
-        // }
 
         string[] memory path = new string[](2);
         path[0] = "last_sale";
@@ -73,20 +48,6 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         request.addStringArray("path", path);
 
         request.add("get", nftAddressEndpoint);
-        
-        // string[] memory path1 = new string[](2);
-        // path1[0]= "last_sale";
-        // path1[1] = "payment_token";
-        // path1[2] = "symbol";
-        // request.addStringArray("path", path1);
-
-        // request.add("get", nftAddressEndpoint);
-
-        // string[] memory path2 = new string[](2);
-        // path2[0]= "last_sale";
-        // path2[1] = "payment_token";
-        // path2[2] = "decimals";
-        // request.addStringArray("path", path2);
         
         // Multiply the result by 10000000000 to remove decimals
         // request.addInt("times", 10000000000);
@@ -101,9 +62,8 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
     function fulfill(bytes32 _requestId, uint256 _totalPrice) public recordChainlinkFulfillment(_requestId)
     {
         total_price = _totalPrice;
-        // payment_token = _paymentToken;
-        // decimals = _decimals;
-        emit RequestNFTData(_requestId, _totalPrice);
+
+        emit RequestMagicEdenNFTData(_requestId, _totalPrice);
     }
 
     /**
