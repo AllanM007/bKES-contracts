@@ -42,9 +42,21 @@ contract MagicEdenAPIConsumer is ChainlinkClient, ConfirmedOwner {
         // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return. 
         request.add("get", nftAddressEndpoint);
 
+        // [
+        //     {
+        //         "pdaAddress": "BaUX9EGhbqdEHhLDN3Ypd4M97P1czX8H87H8smcV3Ee4",
+        //         "auctionHouse": "",
+        //         "tokenAddress": "HP91KznvAa7unW6cE4ZG7cU3YNUjuJNeGg4PVGRa9byB",
+        //         "tokenMint": "HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u",
+        //         "seller": "EWmtsfBA8EikR3vvhsXgxn7cBQCUZfXJ7jMwXUpYRzXY",
+        //         "tokenSize": 1,
+        //         "price": 99
+        //     }
+        // ]
+
         string[] memory path = new string[](2);
-        path[0] = "last_sale";
-        path[1] = "total_price";
+        path[0] = "0";
+        path[1] = "price";
         request.addStringArray("path", path);
 
         request.add("get", nftAddressEndpoint);
