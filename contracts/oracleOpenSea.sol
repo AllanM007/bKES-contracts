@@ -36,13 +36,13 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
      * Create a Chainlink request to retrieve API response, find the target price
      * data, then multiply by 100 (to remove decimal places from price).
      */
-    function requestNFTData(string memory nftAddressEndpoint) public returns (bytes32 requestId) 
+    function requestNFTData() public returns (bytes32 requestId) 
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
         
         // Set the URL to perform the GET request on
         // NOTE: If this oracle gets more than 5 requests from this job at a time, it will not return. 
-        request.add("get", nftAddressEndpoint);
+        request.add("get", "https://api.opensea.io/api/v1/asset/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/1/?include_orders=false");
         
         // Set the path to find the desired data in the API response, where the response format is:
         // {
@@ -67,29 +67,13 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         //     },
         // }
 
-        string[] memory path = new string[](2);
-        path[0] = "last_sale";
-        path[1] = "total_price";
-        request.addStringArray("path", path);
-
-        request.add("get", nftAddressEndpoint);
-        
-        // string[] memory path1 = new string[](2);
-        // path1[0]= "last_sale";
-        // path1[1] = "payment_token";
-        // path1[2] = "symbol";
-        // request.addStringArray("path", path1);
+        // string[] memory path = new string[](2);
+        request.add("path", "last_sale, total_price");
 
         // request.add("get", nftAddressEndpoint);
-
-        // string[] memory path2 = new string[](2);
-        // path2[0]= "last_sale";
-        // path2[1] = "payment_token";
-        // path2[2] = "decimals";
-        // request.addStringArray("path", path2);
         
         // Multiply the result by 10000000000 to remove decimals
-        // request.addInt("times", 10000000000);
+        request.addInt("times", 10000000000);
         
         // Sends the request
         return sendChainlinkRequest(request, fee);

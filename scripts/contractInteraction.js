@@ -200,11 +200,12 @@ async function testMintbKES(mintAmount) {
 
 async function testOpenseaOracle(){
   try {
-    const getNFTData = await OpenseaOracleContract.requestNFTData("https://api.opensea.io/api/v1/asset/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/1/?include_orders=false", { gasLimit: 100000 });
+    // const getNFTData = await OpenseaOracleContract.requestNFTData({ gasLimit: 1000000 });
+    const getNFTPrice = await OpenseaOracleContract.total_price();
     
-    const getNFTDatatx = await getNFTData.wait();
+    // const getNFTDatatx = await getNFTPrice.wait();
     
-    console.log(getNFTDatatx); 
+    console.log(getNFTPrice.toString()); 
   } catch (error) {
     console.log(error);
   }
@@ -212,9 +213,9 @@ async function testOpenseaOracle(){
 
 async function MagicEdenOracle(){
   try {
-    const getNFTData = await OpenseaOracleContract.requestNFTData("api-devnet.magiceden.dev/v2/tokens/HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u/listings", { gasLimit: 100000 });
+    const getNFTData = await MagicEdenOracleContract.requestNFTData("api-devnet.magiceden.dev/v2/tokens/HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u/listings", { gasLimit: 100000 });
     
-    const getNFTDatatx = await getNFTData.wait();
+    const getNFTDatatx = await getNFTPrice.wait();
     
     console.log(getNFTDatatx); 
   } catch (error) {
@@ -222,5 +223,5 @@ async function MagicEdenOracle(){
   }
 }
 
-MagicEdenOracle();
-// testOpenseaOracle();
+// MagicEdenOracle();
+testOpenseaOracle();
