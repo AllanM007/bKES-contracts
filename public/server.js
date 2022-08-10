@@ -66,7 +66,7 @@ router.post('/valueCollateral', function(req,res){
   console.log(data);
 
   var usrAddress = data.address;
-  var amount = data.amount
+  var amount = data.amount;
 
   console.log("71.", usrAddress, amount);
 
@@ -137,9 +137,24 @@ router.get('/getVaultBalance', async function(req,res){
   res.json(context);
 });
 
+router.get('/getActiveDebtBalance', async function(req,res){
+
+  const activeDebt = await collateralAdapterContract.ActiveDebtAmount("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
+  var context = {
+    activeDebtAmount: activeDebt.toString()
+  };
+  console.log("Active Debt:", activeDebt.toString());
+
+  res.json(context);
+});
+
 router.post('/mintbKES', function(req,res){
 
-  const vault = collateralAdapterContract.Vault(usrAddress)
+  var data = req.body;
+  console.log(data);
+
+  var usrAddress = data.address;
+  var amount = data.amount;
   
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -156,10 +171,6 @@ async function mintbKES(usrAddress, mintAmount) {
   console.log(formattedGasPrice);
 
   try {
-
-    // const vaultAmount = await collateralAdapterContract.connect(signer).ActiveDebtAmount(walletAddress);
-
-    // console.log(vaultAmount.toString());
 
     const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
       usrAddress,
@@ -188,6 +199,8 @@ async function mintbKES(usrAddress, mintAmount) {
 router.get('/burn', function(req,res){
   res.sendFile(path.join(__dirname+'/burn.html'));
 });
+
+
 
 router.get('/debtPosition', function(req,res){
   res.sendFile(path.join(__dirname+'/debtPositions.html'));
