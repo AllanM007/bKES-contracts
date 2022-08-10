@@ -2,7 +2,12 @@ require("dotenv").config();
 const express = require('express');
 const app = express();
 const path = require('path');
+const bodyParser = require('body-parser');
 const router = express.Router();
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 const API_KEY = process.env.ALCHEMY_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -55,6 +60,64 @@ router.get('/', function(req,res){
   //__dirname : It will resolve to your project folder.
 });
 
+router.post('/valueCollateral', function(req,res){
+
+  var data = req.body;
+  console.log(data);
+
+  var usrAddress = data.address;
+  var amount = data.amount
+
+  console.log("71.", usrAddress, amount);
+
+  return new Promise((resolve) => {
+      setTimeout(() => {
+          resolve(collateralValuation(usrAddress, amount));
+      }, 2000);
+  });
+});
+
+async function collateralValuation(address, amount){
+  
+  const gasPrice = await alchemyProvider.getGasPrice();
+
+  const formattedGasPrice = gasPrice.toString();
+
+  console.log(formattedGasPrice);
+
+  const collateralPrice = await oracleContract.price()
+
+  const fmtCollateralPrice = collateralPrice.toString();
+
+  console.log(fmtCollateralPrice);
+
+  try {
+
+    const collateralAdaptertx = await collateralAdapterContract.connect(signer).collateralValuation(
+      address,
+      amount,
+      fmtCollateralPrice,
+      { gasLimit: 50000 }
+    );
+
+    console.log(collateralAdaptertx);
+
+    const collateralAdapterObject = await collateralAdaptertx.wait();
+
+    console.log(collateralAdapterObject);
+
+    const valuationObject = collateralAdapterObject.events.find(
+      (event) => event.event === "SuccesfulERC20Valuation"
+    );
+
+    const [to, value] = valuationObject.args;
+
+    console.log(to, value.toString());
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 router.get('/transfer', function(req,res){
   res.sendFile(path.join(__dirname+'/transfer.html'));
 });
@@ -62,6 +125,65 @@ router.get('/transfer', function(req,res){
 router.get('/mint', function(req,res){
   res.sendFile(path.join(__dirname+'/mint.html'));
 });
+
+router.get('/getVaultBalance', async function(req,res){
+
+  const vault = await collateralAdapterContract.Vault("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
+  var context = {
+    vaultAmount: vault.toString()
+  };
+  console.log("Vault Balance:", vault.toString());
+
+  res.json(context);
+});
+
+router.post('/mintbKES', function(req,res){
+
+  const vault = collateralAdapterContract.Vault(usrAddress)
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+        resolve(mintbKES(usrAddress, amount));
+    }, 2000);
+  });
+});
+
+async function mintbKES(usrAddress, mintAmount) {
+  const gasPrice = await alchemyProvider.getGasPrice();
+
+  const formattedGasPrice = gasPrice.toString();
+
+  console.log(formattedGasPrice);
+
+  try {
+
+    // const vaultAmount = await collateralAdapterContract.connect(signer).ActiveDebtAmount(walletAddress);
+
+    // console.log(vaultAmount.toString());
+
+    const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
+      usrAddress,
+      mintAmount,
+      { gasLimit: 100000 }
+    );
+
+    console.log(mintbKEStx);
+
+    const mintbKESObject = await mintbKEStx.wait();
+
+    console.log(mintbKESObject);
+
+    const mintObject = mintbKESObject.events.find(
+      (event) => event.event === "successfulbKESMint"
+    );
+
+    const [to, value] = mintObject.args;
+
+    console.log(to, value.toString());
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 router.get('/burn', function(req,res){
   res.sendFile(path.join(__dirname+'/burn.html'));
