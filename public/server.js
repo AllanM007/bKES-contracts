@@ -129,10 +129,12 @@ router.get('/mint', function(req,res){
 router.get('/getVaultBalance', async function(req,res){
 
   const vault = await collateralAdapterContract.Vault("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
+
+  const fmtVaultBalance = vault.toString() / 10**6;
   var context = {
-    vaultAmount: vault.toString()
+    vaultAmount: fmtVaultBalance
   };
-  console.log("Vault Balance:", vault.toString());
+  console.log("Vault Balance:", fmtVaultBalance);
 
   res.json(context);
 });
@@ -175,7 +177,7 @@ async function mintbKES(usrAddress, mintAmount) {
     const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
       usrAddress,
       mintAmount,
-      { gasLimit: 100000 }
+      { gasLimit: 1000000 }
     );
 
     console.log(mintbKEStx);
