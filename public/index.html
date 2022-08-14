@@ -98,7 +98,7 @@
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       const account = accounts[0];
 
-      const sendVal = document.getElementById("amount").value;//ethers.utils.parseUnits(document.getElementById("amount").value, 18);
+      const sendVal = document.getElementById("amount").value; //ethers.utils.parseUnits(document.getElementById("amount").value, 18);
 
       const gas_limit = "0x100000";
       const gasPrice = await provider.getGasPrice();
