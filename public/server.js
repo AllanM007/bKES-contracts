@@ -299,7 +299,7 @@ async function burnbKES(usrAddress, burnAmount) {
   }
 }
 
-router.get("/debtPosition", function (req, res) {
+router.get("/debtPositions", function (req, res) {
   res.sendFile(path.join(__dirname + "/debtPositions.html"));
 });
 
