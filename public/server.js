@@ -1,13 +1,15 @@
 require("dotenv").config();
-const express = require('express');
+const express = require("express");
 const app = express();
-const path = require('path');
-const bodyParser = require('body-parser');
+const path = require("path");
+const bodyParser = require("body-parser");
 const router = express.Router();
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 const API_KEY = process.env.ALCHEMY_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -64,13 +66,12 @@ const bKESTokenContract = new ethers.Contract(
   signer
 );
 
-router.get('/', function(req,res){
-  res.sendFile(path.join(__dirname+'/index.html'));
+router.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname + "/index.html"));
   //__dirname : It will resolve to your project folder.
 });
 
-router.post('/valueCollateral', function(req,res){
-
+router.post("/valueCollateral", function (req, res) {
   var data = req.body;
   console.log(data);
 
@@ -80,34 +81,31 @@ router.post('/valueCollateral', function(req,res){
   console.log("71.", usrAddress, amount);
 
   return new Promise((resolve) => {
-      setTimeout(() => {
-          resolve(collateralValuation(usrAddress, amount));
-      }, 2000);
+    setTimeout(() => {
+      resolve(collateralValuation(usrAddress, amount));
+    }, 2000);
   });
 });
 
-async function collateralValuation(address, amount){
-  
+async function collateralValuation(address, amount) {
   const gasPrice = await alchemyProvider.getGasPrice();
 
   const formattedGasPrice = gasPrice.toString();
 
   console.log(formattedGasPrice);
 
-  const collateralPrice = await oracleContract.price()
+  const collateralPrice = await oracleContract.price();
 
   const fmtCollateralPrice = collateralPrice.toString();
 
   console.log(fmtCollateralPrice);
 
   try {
-
-    const collateralAdaptertx = await collateralAdapterContract.connect(signer).collateralValuation(
-      address,
-      amount,
-      fmtCollateralPrice,
-      { gasLimit: 50000 }
-    );
+    const collateralAdaptertx = await collateralAdapterContract
+      .connect(signer)
+      .collateralValuation(address, amount, fmtCollateralPrice, {
+        gasLimit: 50000,
+      });
 
     console.log(collateralAdaptertx);
 
@@ -125,65 +123,67 @@ async function collateralValuation(address, amount){
   } catch (error) {
     console.log(error);
   }
-};
+}
 
-router.get('/transfer', function(req,res){
-  res.sendFile(path.join(__dirname+'/transfer.html'));
+router.get("/transfer", function (req, res) {
+  res.sendFile(path.join(__dirname + "/transfer.html"));
 });
 
-router.get('/mint', function(req,res){
-  res.sendFile(path.join(__dirname+'/mint.html'));
+router.get("/mint", function (req, res) {
+  res.sendFile(path.join(__dirname + "/mint.html"));
 });
 
-router.get('/getVaultBalance', async function(req,res){
+router.get("/getVaultBalance", async function (req, res) {
+  const vault = await collateralAdapterContract.Vault(
+    "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d"
+  );
 
-  const vault = await collateralAdapterContract.Vault("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
-
-  const fmtVaultBalance = vault.toString() / 10**6;
+  const fmtVaultBalance = vault.toString() / 10 ** 6;
   var context = {
-    vaultAmount: fmtVaultBalance
+    vaultAmount: fmtVaultBalance,
   };
   console.log("Vault Balance:", fmtVaultBalance);
 
   res.json(context);
 });
 
-router.get('/getAccountbKESBalance', async function(req,res){
-
-  const bkesBalance = await bKESTokenContract.balanceOf("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
+router.get("/getAccountbKESBalance", async function (req, res) {
+  const bkesBalance = await bKESTokenContract.balanceOf(
+    "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d"
+  );
 
   const fmtBKESBalance = bkesBalance.toString();
-  
+
   var context = {
-    bKESAmount: fmtBKESBalance
+    bKESAmount: fmtBKESBalance,
   };
   console.log("Vault Balance:", fmtBKESBalance);
 
   res.json(context);
 });
 
-router.get('/getActiveDebtBalance', async function(req,res){
-
-  const activeDebt = await collateralAdapterContract.ActiveDebtAmount("0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d");
+router.get("/getActiveDebtBalance", async function (req, res) {
+  const activeDebt = await collateralAdapterContract.ActiveDebtAmount(
+    "0x15cdCBB08cd5b2543A8E009Dbf5a6C6d7D2aB53d"
+  );
   var context = {
-    activeDebtAmount: activeDebt.toString()
+    activeDebtAmount: activeDebt.toString(),
   };
   console.log("Active Debt:", activeDebt.toString());
 
   res.json(context);
 });
 
-router.post('/mintbKES', function(req,res){
-
+router.post("/mintbKES", function (req, res) {
   var data = req.body;
   console.log(data);
 
   var usrAddress = data.address;
   var amount = data.amount;
-  
+
   return new Promise((resolve) => {
     setTimeout(() => {
-        resolve(mintbKES(usrAddress, amount));
+      resolve(mintbKES(usrAddress, amount));
     }, 2000);
   });
 });
@@ -196,12 +196,9 @@ async function mintbKES(usrAddress, mintAmount) {
   console.log(formattedGasPrice);
 
   try {
-
-    const mintbKEStx = await collateralAdapterContract.connect(signer).initiateMint(
-      usrAddress,
-      mintAmount,
-      { gasLimit: 1000000 }
-    );
+    const mintbKEStx = await collateralAdapterContract
+      .connect(signer)
+      .initiateMint(usrAddress, mintAmount, { gasLimit: 1000000 });
 
     console.log(mintbKEStx);
 
@@ -218,28 +215,27 @@ async function mintbKES(usrAddress, mintAmount) {
     console.log(to, value.toString());
 
     return "Mint Succesful";
-
   } catch (error) {
     console.log(error);
 
-    return(error);
+    return error;
   }
 }
 
-router.get('/burn', function(req,res){
-  res.sendFile(path.join(__dirname+'/burn.html'));
+router.get("/burn", function (req, res) {
+  res.sendFile(path.join(__dirname + "/burn.html"));
 });
 
-router.post('/burnbKES', function(req, res){
+router.post("/burnbKES", function (req, res) {
   var data = req.body;
   console.log(data);
 
   var usrAddress = data.address;
   var amount = data.amount;
-  
+
   return new Promise((resolve) => {
     setTimeout(() => {
-        resolve(burnbKES(usrAddress, amount));
+      resolve(burnbKES(usrAddress, amount));
     }, 2000);
   });
 });
@@ -252,44 +248,65 @@ async function burnbKES(usrAddress, burnAmount) {
   console.log(formattedGasPrice);
 
   try {
-
-    const burnbKEStx = await collateralAdapterContract.connect(signer).initiateBurn(
+    const bKESTransferApproval = await tokenABI.Approve(
       usrAddress,
-      burnAmount,
-      { gasLimit: 1000000 }
+      bKESTokenAddress,
+      sendVal
     );
 
-    console.log(burnbKEStx);
+    const approvalConfirmation = bKESTransferApproval.wait();
 
-    const burnbKESObject = await burnbKEStx.wait();
+    if (approvalConfirmation.status == 1) {
+      const bKESTransfer = await tokenABI.transferFrom(
+        usrAddress,
+        bKESTokenAddress,
+        sendVal
+      );
 
-    console.log(burnbKESObject);
+      const bKESTransferTx = await bKESTransfer.wait();
 
-    const burnObject = burnbKESObject.events.find(
-      (event) => event.event === "successfulbKESBurn"
-    );
+      console.log(bKESTransferTx);
 
-    const [to, value] = burnObject.args;
+      if (bKESTransferTx.status == 1) {
+        const burnbKEStx = await collateralAdapterContract
+          .connect(signer)
+          .initiateBurn(usrAddress, burnAmount, { gasLimit: 1000000 });
 
-    console.log(to, value.toString());
+        console.log(burnbKEStx);
 
-    return "Burn Succesful";
+        const burnbKESObject = await burnbKEStx.wait();
 
+        console.log(burnbKESObject);
+
+        const burnObject = burnbKESObject.events.find(
+          (event) => event.event === "successfulbKESBurn"
+        );
+
+        const [to, value] = burnObject.args;
+
+        console.log(to, value.toString());
+
+        return "Burn Succesful";
+      } else {
+        console.log("unsuccesful bKES transfer");
+      }
+    } else {
+    }
   } catch (error) {
     console.log(error);
 
-    return(error);
+    return error;
   }
 }
 
-router.get('/debtPosition', function(req,res){
-  res.sendFile(path.join(__dirname+'/debtPositions.html'));
+router.get("/debtPosition", function (req, res) {
+  res.sendFile(path.join(__dirname + "/debtPositions.html"));
 });
 
 //add the router
-app.use('/', router);
+app.use("/", router);
 app.listen(process.env.port || 3000);
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/js', express.static(__dirname + '/js'));
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/js", express.static(__dirname + "/js"));
 
-console.log('Running at Port 3000');
+console.log("Running at Port 3000");
