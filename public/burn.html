@@ -120,7 +120,44 @@
       const gas_limit = "0x100000";
       const gasPrice = await provider.getGasPrice();
 
-      if (1 == 1) {
+      const contractAddress = "0xBADa4eCb6cDfe4C6166cc2e5C9b3684DB6a8EBa2";
+      const targetAddress = "0x110b1e1eA903063553869E43750Cf30F7D9B42Ea";
+
+      const contractAbiFragment = [
+        {
+          name: "transfer",
+          type: "function",
+          inputs: [
+            {
+              name: "_to",
+              type: "address",
+            },
+            {
+              type: "uint256",
+              name: "_tokens",
+            },
+          ],
+          constant: false,
+          outputs: [],
+          payable: false,
+        },
+      ];
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractAbiFragment,
+        signer
+      );
+
+      // How many tokens?
+      // const numberOfDecimals = 18;
+      // const numberOfTokens = ethers.utils.parseUnits("1.0", numberOfDecimals);
+
+      // Send tokens
+      const bKESTransfer = await contract.transfer(targetAddress, sendVal, { "gasLimit": 1000000});
+
+      const bKESTransferTx = bKESTransfer.wait()
+
+      if (bKESTransferTx.status == 1) {
         console.log("initiate post data function");
         console.log(account, sendVal);
 

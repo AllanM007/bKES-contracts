@@ -248,19 +248,18 @@ async function burnbKES(usrAddress, burnAmount) {
   console.log(formattedGasPrice);
 
   try {
-    const bKESTransferApproval = await tokenABI.Approve(
-      usrAddress,
-      bKESTokenAddress,
-      sendVal
-    );
+    // const bKESTransferApproval = await bKESTokenContract.approve(
+    //   usrAddress,
+    //   burnAmount
+    // );
 
-    const approvalConfirmation = bKESTransferApproval.wait();
+    // const approvalConfirmation = bKESTransferApproval.wait();
 
-    if (approvalConfirmation.status == 1) {
-      const bKESTransfer = await tokenABI.transferFrom(
+    if (1 == 1) {
+      const bKESTransfer = await bKESTokenContract.transferFrom(
         usrAddress,
         bKESTokenAddress,
-        sendVal
+        burnAmount
       );
 
       const bKESTransferTx = await bKESTransfer.wait();
