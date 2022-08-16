@@ -10,7 +10,16 @@ contract CollateralAdapter is ERC20, bKES{
 
     mapping(address => uint256) public Vault;
     mapping(address => uint256) public ActiveDebtAmount;
-    mapping(address => uint256) public HealthFactor;
+
+    struct HealthFactor {
+        address usrAddress;
+        uint debtValue;
+        uint dcr; //debt collateralization ratio
+    }
+
+    mapping(uint256 => HealthFactor) public usrHealthFactor;
+
+    HealthFactor positionHealthFactor;
 
     constructor(){
         // token = bKES(address(0x0000000000000000000000000000000000001010));
@@ -65,9 +74,18 @@ contract CollateralAdapter is ERC20, bKES{
 
         uint256 debtRatio = currentDebt / collateralValue * 100;
 
-        HealthFactor[_account] = debtRatio;
+        if (positionHealthFactor.usrAddress == _account) {
+            positionHealthFactor.debtValue = currentDebt;
+            positionHealthFactor.dcr = debtRatio;
+        } else {
+            positionHealthFactor = HealthFactor(_account, currentDebt, debtRatio);   
+        }   
 
         return debtRatio;
+    }
+
+    function positionsHealthFactor(uint256 id) public view returns(HealthFactor memory){
+        return usrHealthFactor[id];
     }
 
     function initiateMint(address _account, uint _amount) public returns(bool){
@@ -107,13 +125,20 @@ contract CollateralAdapter is ERC20, bKES{
     }
     
     function liquidatePosition(address _owner, address _liquidator, uint256 _amount) public returns(bool){
-        require(85 >=HealthFactor[_owner], "Position still valid");
+        
+        if (positionHealthFactor.usrAddress == _owner) {
+            uint256 debtStatus = positionHealthFactor.dcr;
 
-        uint256 newVault = ActiveDebtAmount[_owner] - _amount;
-
-        ActiveDebtAmount[_owner] = newVault;
-
-        return true;
+            require(85 >= debtStatus, "Position still valid");
+            
+            uint256 newVault = ActiveDebtAmount[_owner] - _amount;
+            
+            ActiveDebtAmount[_owner] = newVault;
+            
+            return true;
+        } else {
+            
+        }
     }
 
 }
