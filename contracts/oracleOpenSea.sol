@@ -8,8 +8,8 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
 
     uint256 public total_price;
-    uint256 public decimals;
-    string public payment_token;
+    // uint256 public decimals;
+    // string public payment_token;
 
     bytes32 private jobId;
     uint256 private fee;
@@ -68,12 +68,16 @@ contract OpenSeaAPIConsumer is ChainlinkClient, ConfirmedOwner {
         // }
 
         // string[] memory path = new string[](2);
-        request.add("path", "last_sale, total_price");
+        // request.add("path", "last_sale, total_price");
+        string[] memory path = new string[](2);
+        path[0] = "last_sale";
+        path[1] = "total_price";
+        request.addStringArray("path", path);
 
         // request.add("get", nftAddressEndpoint);
         
         // Multiply the result by 10000000000 to remove decimals
-        request.addInt("times", 10000000000);
+        // request.addInt("times", 10000000000);
         
         // Sends the request
         return sendChainlinkRequest(request, fee);

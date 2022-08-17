@@ -201,11 +201,14 @@ async function testMintbKES(mintAmount) {
 async function testOpenseaOracle(){
   try {
     // const getNFTData = await OpenseaOracleContract.requestNFTData({ gasLimit: 1000000 });
-    const getNFTPrice = await OpenseaOracleContract.total_price();
+    // const getNFTPrice = await OpenseaOracleContract.total_price();
+    const getNFTPrice = await OpenseaOracleContract.withdrawLink();
     
-    // const getNFTDatatx = await getNFTPrice.wait();
+    // const getNFTDatatx = await getNFTData.wait();
+
+    // console.log(getNFTDatatx);
     
-    console.log(getNFTPrice.toString()); 
+    console.log(getNFTPrice); //.toString()); 
   } catch (error) {
     console.log(error);
   }

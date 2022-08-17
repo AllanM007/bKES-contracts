@@ -21,7 +21,7 @@ contract CollateralAdapter is ERC20, bKES{
 
     HealthFactor positionHealthFactor;
 
-    constructor(){
+    constructor(address bKESTokenAddress){
         // token = bKES(address(0x0000000000000000000000000000000000001010));
     }
 
@@ -74,7 +74,7 @@ contract CollateralAdapter is ERC20, bKES{
 
         uint256 debtRatio = currentDebt / collateralValue * 100;
 
-        if (positionHealthFactor.usrAddress == _account) {
+        if (_account == positionHealthFactor.usrAddress) {
             positionHealthFactor.debtValue = currentDebt;
             positionHealthFactor.dcr = debtRatio;
         } else {
@@ -84,7 +84,7 @@ contract CollateralAdapter is ERC20, bKES{
         return debtRatio;
     }
 
-    function positionsHealthFactor(uint256 id) public view returns(HealthFactor memory){
+    function getPositionHealthFactor(uint256 id) public view returns(HealthFactor memory){
         return usrHealthFactor[id];
     }
 
@@ -129,7 +129,7 @@ contract CollateralAdapter is ERC20, bKES{
         if (positionHealthFactor.usrAddress == _owner) {
             uint256 debtStatus = positionHealthFactor.dcr;
 
-            require(85 >= debtStatus, "Position still valid");
+            require(85 >= debtStatus, "Position still valid"); //only allow positions with more than 85 to be liquidated
             
             uint256 newVault = ActiveDebtAmount[_owner] - _amount;
             
@@ -137,7 +137,7 @@ contract CollateralAdapter is ERC20, bKES{
             
             return true;
         } else {
-            
+            return false;
         }
     }
 
