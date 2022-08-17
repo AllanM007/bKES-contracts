@@ -200,31 +200,31 @@ async function testMintbKES(mintAmount) {
 
 async function testOpenseaOracle(){
   try {
-    // const getNFTData = await OpenseaOracleContract.requestNFTData({ gasLimit: 1000000 });
+    const getNFTData = await OpenseaOracleContract.requestNFTData({ gasLimit: 1000000 });
     // const getNFTPrice = await OpenseaOracleContract.total_price();
-    const getNFTPrice = await OpenseaOracleContract.withdrawLink();
+    // const getNFTPrice = await OpenseaOracleContract.withdrawLink();
     
-    // const getNFTDatatx = await getNFTData.wait();
+    const getNFTDatatx = await getNFTData.wait();
 
-    // console.log(getNFTDatatx);
+    console.log(getNFTDatatx);
     
-    console.log(getNFTPrice); //.toString()); 
+    // console.log(getNFTPrice.toString()); 
   } catch (error) {
     console.log(error);
   }
 }
 
-async function MagicEdenOracle(){
-  try {
-    const getNFTData = await MagicEdenOracleContract.requestNFTData("api-devnet.magiceden.dev/v2/tokens/HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u/listings", { gasLimit: 100000 });
+// async function MagicEdenOracle(){
+//   try {
+//     const getNFTData = await MagicEdenOracleContract.requestNFTData("api-devnet.magiceden.dev/v2/tokens/HdcrPMF4kHKqy5V9JibNSoWLNpqnxQUBDEBeimZkLf7u/listings", { gasLimit: 100000 });
     
-    const getNFTDatatx = await getNFTPrice.wait();
+//     const getNFTDatatx = await getNFTPrice.wait();
     
-    console.log(getNFTDatatx); 
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     console.log(getNFTDatatx); 
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 // MagicEdenOracle();
 testOpenseaOracle();
