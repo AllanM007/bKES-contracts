@@ -188,6 +188,29 @@ router.post("/mintbKES", function (req, res) {
   });
 });
 
+async function calculatePositionHealthFactor(usrAddress) {
+
+  const collateralPrice = await oracleContract.price();
+
+  try {
+    const calculateHealthFactortx = await collateralAdapterContract
+      .connect(signer)
+      .calculateHealthFactor(usrAddress, collateralPrice, { gasLimit: 1000000 });
+
+    console.log(calculateHealthFactortx);
+
+    const calculateHealthFactortxObject = await calculateHealthFactortx.wait();
+
+    console.log(calculateHealthFactortxObject);
+
+    return "Calculation Succesful";
+  } catch (error) {
+    console.log(error);
+
+    return error;
+  }
+}
+
 async function mintbKES(usrAddress, mintAmount) {
   const gasPrice = await alchemyProvider.getGasPrice();
 
@@ -213,6 +236,8 @@ async function mintbKES(usrAddress, mintAmount) {
     const [to, value] = mintObject.args;
 
     console.log(to, value.toString());
+
+    calculatePositionHealthFactor(usrAddress);
 
     return "Mint Succesful";
   } catch (error) {
@@ -300,6 +325,23 @@ async function burnbKES(usrAddress, burnAmount) {
 
 router.get("/debtPositions", function (req, res) {
   res.sendFile(path.join(__dirname + "/debtPositions.html"));
+});
+
+router.get("/getActiveDebtPositions", async function (req, res) {
+  positions = []
+
+  for (let index = 0; index < positions.length; index++) {
+    const activepositions = await collateralAdapterContract.getPositionHealthFactor(1);
+
+    positions.push(activepositions);
+  }
+
+  var context = {
+    activePositions: positions,
+  };
+  console.log("Debt Positions:", positions);
+
+  res.json(context);
 });
 
 //add the router

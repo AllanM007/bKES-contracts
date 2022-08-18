@@ -15,7 +15,7 @@ async function main() {
 
   // We get the contract to deploy
   const CollateralAdapter = await hre.ethers.getContractFactory("CollateralAdapter");
-  const CollateralAdapterContract = await CollateralAdapter.deploy(0xBADa4eCb6cDfe4C6166cc2e5C9b3684DB6a8EBa2);
+  const CollateralAdapterContract = await CollateralAdapter.deploy("0xBADa4eCb6cDfe4C6166cc2e5C9b3684DB6a8EBa2");
 
   await CollateralAdapterContract.deployed();
 

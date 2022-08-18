@@ -66,7 +66,7 @@
             <input type="text" id="amount" class="form-control" />
           </div>
           <div class="form-group mt-3">
-            <button class="sendEthButton btn btn-success w-100">
+            <button class="btn btn-success w-100" id="mintbKESButton">
               Mint
             </button>
           </div>
@@ -133,7 +133,7 @@
       });
     }
     getBalance()
-    document.querySelector('button').addEventListener('click', mintbKES);
+    document.getElementById('mintbKESButton').addEventListener('click', mintbKES);
   </script>
 </body>
 
