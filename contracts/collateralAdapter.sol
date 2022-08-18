@@ -6,7 +6,7 @@ import { ERC20 } from "./ERC20.sol";
 
 contract CollateralAdapter is ERC20, bKES{
     
-    bKES bKESContract = new bKES();
+    // bKES bKESContract = new bKES();
 
     address tokenAddress;
 
@@ -60,7 +60,7 @@ contract CollateralAdapter is ERC20, bKES{
         bKES(collateralAddress).transferFrom(address(this), _account, collateralWithdrawal);
 
         // burn bKES token to remove them from circulation
-        bKESContract.burnbKES(_account, _amount);
+        bKES(tokenAddress).burnbKES(_account, _amount);
 
         emit SuccesfulERC20Withdrawal(_account, _amount);
         return true;
@@ -95,7 +95,7 @@ contract CollateralAdapter is ERC20, bKES{
 
         require( VaultAmount > _amount, "Cannot mint more than vault amount");
 
-        bKESContract.mintbKES(_account, _amount);
+        bKES(tokenAddress).mintbKES(_account, _amount);
 
         emit successfulbKESMint(_account, _amount);
 
@@ -113,7 +113,7 @@ contract CollateralAdapter is ERC20, bKES{
 
         require( VaultAmount >= _amount , "Cannot burn more than vault amount");
 
-        bKESContract.burnbKES(_account, _amount);
+        bKES(tokenAddress).burnbKES(_account, _amount);
 
         emit successfulbKESBurn(_account, _amount);
 
