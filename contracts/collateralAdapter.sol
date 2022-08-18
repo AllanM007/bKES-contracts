@@ -8,6 +8,8 @@ contract CollateralAdapter is ERC20, bKES{
     
     bKES bKESContract = new bKES();
 
+    address tokenAddress;
+
     mapping(address => uint256) public Vault;
     mapping(address => uint256) public ActiveDebtAmount;
 
@@ -22,7 +24,7 @@ contract CollateralAdapter is ERC20, bKES{
     HealthFactor positionHealthFactor;
 
     constructor(address bKESTokenAddress){
-        // token = bKES(address(0x0000000000000000000000000000000000001010));
+        tokenAddress = bKESTokenAddress;
     }
 
     event SuccesfulERC20Valuation(address account, uint256 amount);
@@ -124,16 +126,21 @@ contract CollateralAdapter is ERC20, bKES{
         return true;
     }
     
-    function liquidatePosition(address _owner, address _liquidator, uint256 _amount) public returns(bool){
+    function liquidatePosition(address _owner, address _liquidator) public returns(bool){
         
         if (positionHealthFactor.usrAddress == _owner) {
             uint256 debtStatus = positionHealthFactor.dcr;
 
             require(85 >= debtStatus, "Position still valid"); //only allow positions with more than 85 to be liquidated
             
-            uint256 newVault = ActiveDebtAmount[_owner] - _amount;
-            
-            ActiveDebtAmount[_owner] = newVault;
+            uint256 vaultBalance = Vault[_owner];
+
+            uint256 liquidationReward  = vaultBalance / 100 * 10;
+
+            ERC20(tokenAddress).transfer(_liquidator, liquidationReward);
+
+            ActiveDebtAmount[_owner] = 0;
+            Vault[_owner] = 0;
             
             return true;
         } else {
