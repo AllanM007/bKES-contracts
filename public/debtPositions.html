@@ -67,21 +67,21 @@
                             <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
                             <td>5.12</td>
                             <td>@45</td>
-                            <td><button class="btn btn-danger w-100">Liquidate</button></td>
+                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
                         </tr>
                         <tr>
                             <th scope="row">2</th>
                             <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
                             <td>5.12</td>
                             <td>@45</td>
-                            <td><button class="btn btn-danger w-100">Liquidate</button></td>
+                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
                         </tr>
                         <tr>
                             <th scope="row">3</th>
                             <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
                             <td>5.15</td>
                             <td>@45</td>
-                            <td><button class="btn btn-danger w-100">Liquidate</button></td>
+                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -90,6 +90,10 @@
     </div>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
     <script>
+    
+    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+
         $.ajax({
             type: 'get',
             url: '/getActiveDebtPositions',
@@ -153,11 +157,16 @@
             $("#btnliquidate").click(function () {
                 if (table.rows('.selected').data().length > 0) {
                     var data = table.rows('.selected').data()[0];
-                    $.ajax({
-                        url: "/liquidatePosition",
-                        type: "post",
-                        data: data
-                    });
+                    $('#address').val(data["address"]);
+                    $('#debtValue').val(data["debtValue"]);
+                    $('#dcr').val(data["dcr"]);
+                    data["liquidator"] = account;
+
+                    // $.ajax({
+                    //     url: "/liquidatePosition",
+                    //     type: "post",
+                    //     data: data
+                    // });
                     createTable();
                 } else
                     alert("Select a position to continue.");

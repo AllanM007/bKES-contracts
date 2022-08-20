@@ -328,13 +328,13 @@ router.get("/debtPositions", function (req, res) {
 });
 
 router.get("/getActiveDebtPositions", async function (req, res) {
-  positions = []
+  // positions = []
 
-  for (let index = 0; index < positions.length; index++) {
-    const activepositions = await collateralAdapterContract.getPositionHealthFactor(1);
+  // for (let index = 0; index < positions.length; index++) {
+  const positions = await collateralAdapterContract.getPositionHealthFactor(1);
 
-    positions.push(activepositions);
-  }
+    // positions.push(activepositions);
+  // }
 
   var context = {
     activePositions: positions,
@@ -343,6 +343,45 @@ router.get("/getActiveDebtPositions", async function (req, res) {
 
   res.json(context);
 });
+
+router.post("/liquidatePosition", function (req, res) {
+  var data = req.body;
+  console.log(data);
+
+  var usrAddress = data.positionOwnerAddress;
+  var liquidatorAddress = data.liquidatorAddress;
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(liquidatePosition(usrAddress, liquidatorAddress));
+    }, 2000);
+  });
+});
+
+async function liquidatePosition(usrAddress, liquidatorAddress) {
+  const gasPrice = await alchemyProvider.getGasPrice();
+
+  const formattedGasPrice = gasPrice.toString();
+
+  console.log(formattedGasPrice);
+
+  try {
+    const liquidatePositiontx = await collateralAdapterContract
+      .connect(signer)
+      .liquidatePosition(usrAddress, liquidatorAddress, { gasLimit: 1000000 });
+
+    console.log(liquidatePositiontx);
+
+    const liquidatePositionObject = await liquidatePositiontx.wait();
+
+    console.log(liquidatePositionObject);
+
+    return "Liquidation Succesful";
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
 
 //add the router
 app.use("/", router);
