@@ -16,11 +16,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;600;700;800;900&display=swap"
         rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous">
-        </script>
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
@@ -61,29 +60,7 @@
                             <th scope="col">Health Factor</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
-                            <td>5.12</td>
-                            <td>@45</td>
-                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
-                            <td>5.12</td>
-                            <td>@45</td>
-                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>0x15cdcbb08cd5b2543a8e009dbf5a6c6d7d2ab53d</td>
-                            <td>5.15</td>
-                            <td>@45</td>
-                            <td><button class="btn btn-danger w-100" id="btnliquidate">Liquidate</button></td>
-                        </tr>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </section>
         </div>
@@ -91,21 +68,21 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
     <script>
     
-    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
+    // const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+    // const account = accounts[0];
 
-        $.ajax({
-            type: 'get',
-            url: '/getActiveDebtPositions',
-            dataType: 'json',
-            success: function (data) {
-                console.log(data);
-                document.querySelector('#vaultBalance').innerHTML = data.vaultAmount;
-            },
-            error: function (err) {
-                console.log(err.statusText);
-            }
-        });
+        // $.ajax({
+        //     type: 'get',
+        //     url: '/getActiveDebtPositions',
+        //     dataType: 'json',
+        //     success: function (data) {
+        //         console.log(data);
+        //         document.querySelector('#vaultBalance').innerHTML = data.vaultAmount;
+        //     },
+        //     error: function (err) {
+        //         console.log(err.statusText);
+        //     }
+        // });
 
         function createTable() {
             table = $('#debtPositionsTable').DataTable({
@@ -202,7 +179,7 @@
 
             // we use the code below to convert the balance from wei to eth
             // document.querySelector('#showBalance').innerHTML = fmtBalance;
-            document.querySelector('#showAccount').innerHTML = account;
+            // document.querySelector('#showAccount').innerHTML = account;
         }
 
         async function liquidatePosition() {
@@ -226,7 +203,7 @@
             });
         }
         getBalance()
-        document.getElementById('mintbKESButton').addEventListener('click', mintbKES);
+        // document.getElementById('mintbKESButton').addEventListener('click', mintbKES);
     </script>
 </body>
 

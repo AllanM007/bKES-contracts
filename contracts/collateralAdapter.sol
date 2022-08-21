@@ -1,5 +1,6 @@
 /// SPDX-License-Identifier:MIT
 pragma solidity ^0.8.0;
+pragma experimental ABIEncoderV2;
 
 import {bKES} from "./bKESDispatcher.sol";
 import {ERC20} from "./ERC20.sol";
@@ -13,6 +14,7 @@ contract CollateralAdapter is ERC20, bKES {
     mapping(address => uint256) public ActiveDebtAmount;
 
     struct HealthFactor {
+        uint id;
         address usrAddress;
         uint256 debtValue;
         uint256 dcr; //debt collateralization ratio
@@ -20,10 +22,12 @@ contract CollateralAdapter is ERC20, bKES {
 
     HealthFactor healthFactor;
 
-    mapping(uint256 => HealthFactor) public usrHealthFactor;
+    mapping(uint => HealthFactor) public positionHealthFactor;
+    uint public positionsCount;
 
     constructor(address bKESTokenAddress) {
         tokenAddress = bKESTokenAddress;
+        positionsCount = 0;
     }
 
     event SuccesfulERC20Valuation(address account, uint256 amount);
@@ -87,35 +91,28 @@ contract CollateralAdapter is ERC20, bKES {
 
         uint256 debtRatio = (currentDebt / collateralValue) * 100;
 
-        
-            if (_account == healthFactor.usrAddress) {
-                healthFactor.debtValue = currentDebt;
-                healthFactor.dcr = debtRatio;
-            } else {
-                HealthFactor(
-                    _account,
-                    currentDebt,
-                    debtRatio
-                );
-            }
+        // if (positionsCount == 0) {
+        //     return 0;
+        // } else if (_account == healthFactor.usrAddress) {
+        //     healthFactor.debtValue = currentDebt;
+        //     healthFactor.dcr = debtRatio;
+        // } else {
+
+        positionHealthFactor[positionsCount] = HealthFactor( positionsCount, _account, currentDebt, debtRatio);
+
+        positionsCount++;
 
         return debtRatio;
     }
 
-    function getPositionHealthFactor()
+    function getPositionHealthFactor(uint id)
         public
         view
         returns (
-            address,
-            uint256,
-            uint256
+            HealthFactor memory
         )
     {
-        return (
-            healthFactor.usrAddress,
-            healthFactor.debtValue,
-            healthFactor.dcr
-        );
+        return positionHealthFactor[id];
     }
 
     function initiateMint(address _account, uint256 _amount)

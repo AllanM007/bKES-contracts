@@ -237,7 +237,7 @@ async function mintbKES(usrAddress, mintAmount) {
 
     console.log(to, value.toString());
 
-    calculatePositionHealthFactor(usrAddress);
+    // calculatePositionHealthFactor(usrAddress);
 
     return "Mint Succesful";
   } catch (error) {
@@ -328,18 +328,30 @@ router.get("/debtPositions", function (req, res) {
 });
 
 router.get("/getActiveDebtPositions", async function (req, res) {
-  // positions = []
+  positions = []
 
-  // for (let index = 0; index < positions.length; index++) {
-  const positions = await collateralAdapterContract.getPositionHealthFactor(1);
+  const positionsCount = await collateralAdapterContract.positionsCount();
 
-    // positions.push(activepositions);
-  // }
+  for (let index = 0; index < positionsCount; index++) {
+    const activepositions = await collateralAdapterContract.getPositionHealthFactor(1, { gasLimit: 1000000 });
+
+    var positionsToString = activepositions.toString();
+
+    var fmtPositions = positionsToString.split(' ');
+
+    for (let item = 0; item < fmtPositions.length; item++) {
+      console.log(fmtPositions[item]);
+      
+    }
+
+    positions.push(fmtPositions);
+
+  }
 
   var context = {
-    activePositions: positions,
+    data: positions,
   };
-  console.log("Debt Positions:", positions);
+  console.log(context);
 
   res.json(context);
 });
