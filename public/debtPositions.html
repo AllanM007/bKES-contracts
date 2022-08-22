@@ -19,7 +19,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.1.0/css/fixedColumns.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css">
+    <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.js"></script>
 </head>
 
 <body>
@@ -51,10 +55,11 @@
     <div class="container mt-">
         <div class="d-flex min-vh-100 justify-content-center align-items-center">
             <section class="border rounded p-4 py-5 shadow">
-                <table class="table" id="debtPositionsTable">
+                <button id="btnliquidate" class="btn btn-primary">Liquidate</button>
+                <table id="debtPositionsTable" class="ui celled table stripe">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col"></th>
                             <th scope="col">Address</th>
                             <th scope="col">Debt Value</th>
                             <th scope="col">Health Factor</th>
@@ -66,24 +71,9 @@
         </div>
     </div>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
-    <script>
-    
-    // const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-    // const account = accounts[0];
-
-        // $.ajax({
-        //     type: 'get',
-        //     url: '/getActiveDebtPositions',
-        //     dataType: 'json',
-        //     success: function (data) {
-        //         console.log(data);
-        //         document.querySelector('#vaultBalance').innerHTML = data.vaultAmount;
-        //     },
-        //     error: function (err) {
-        //         console.log(err.statusText);
-        //     }
-        // });
-
+    <script type="text/javascript"> 
+        var table;
+        
         function createTable() {
             table = $('#debtPositionsTable').DataTable({
                 destroy: true,
@@ -93,8 +83,8 @@
                     type: 'get',
                 },
                 select: {
-                    style: 'single',
-                    selector: 'tr'
+                    style: 'os',
+                    selector: 'td:first-child'
                 },
                 columnDefs: [{
                     orderable: false,
@@ -102,7 +92,7 @@
                     targets: 0
                 }],
                 order: [
-                    [7, "desc"]
+                    [2, "desc"]
                 ],
                 scrollY: false,
                 scrollX: "100%",
@@ -113,9 +103,9 @@
                 columns: [{
                     data: "id"
                 }, {
-                    data: "address"
+                    data: "usrAddress"
                 }, {
-                    data: "debtValue"
+                    data: "debt"
                 }, {
                     data: "dcr"
                 }
@@ -123,27 +113,28 @@
                 ],
                 "rowCallback": function (nRow, aData) {
                     $('td', nRow).eq(0).html("");
-                    if (aData.dcr >= 85) {
-                        $('td', nRow).eq(8).html("<td><button type='button' class='btn btn-block btn-success'>Active</button></td>");
-                    } else {
-                        $('td', nRow).eq(8).html("<td><button type='button' class='btn btn-block btn-warning'>Liquidate</button></td>");
-                    }
+                    // if (aData.dcr == 1) {
+                    //     $('td', nRow).eq(4).html("<td><button href='javascript:void(0);' type='button' class='btn btn-block btn-success'>Active</button></td>");
+                    // } else {
+                    //     $('td', nRow).eq(4).html("<td><button type='button' id='btnliquidate' class='btn btn-block btn-warning'>Liquidate</button></td>");
+                    // }
                 }
             });
 
             $("#btnliquidate").click(function () {
                 if (table.rows('.selected').data().length > 0) {
                     var data = table.rows('.selected').data()[0];
-                    $('#address').val(data["address"]);
-                    $('#debtValue').val(data["debtValue"]);
-                    $('#dcr').val(data["dcr"]);
-                    data["liquidator"] = account;
+                    console.log(data);
+                    // $('#address').val(data["address"]);
+                    // $('#debtValue').val(data["debtValue"]);
+                    // $('#dcr').val(data["dcr"]);
+                    // data["liquidator"] = account;
 
-                    // $.ajax({
-                    //     url: "/liquidatePosition",
-                    //     type: "post",
-                    //     data: data
-                    // });
+                    $.ajax({
+                        url: "/liquidatePosition",
+                        type: "post",
+                        data: data
+                    });
                     createTable();
                 } else
                     alert("Select a position to continue.");

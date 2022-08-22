@@ -229,10 +229,11 @@ async function testOpenseaOracle(){
 async function testcollateralHealthFactor(){
 
   const collateralPrice = await oracleContract.price();
+  console.log(collateralPrice.toString());
 
   try {
     const calculatePositionHealthFactor = await collateralAdapterContract.calculateHealthFactor(walletAddress, collateralPrice, { gasLimit: 1000000 });
-    // const collateralHealthFactor = await collateralAdapterContract.getPositionHealthFactor(2,{ gasLimit: 1000000 });
+    // const collateralHealthFactor = await collateralAdapterContract.getPositionHealthFactor(1,{ gasLimit: 1000000 });
 
     const collateralHealthFactor = await calculatePositionHealthFactor.wait();
 

@@ -332,26 +332,29 @@ router.get("/getActiveDebtPositions", async function (req, res) {
 
   const positionsCount = await collateralAdapterContract.positionsCount();
 
-  for (let index = 0; index < positionsCount; index++) {
-    const activepositions = await collateralAdapterContract.getPositionHealthFactor(1, { gasLimit: 1000000 });
+  for (let item = 0; item < positionsCount; item++) {
+    const activepositions = await collateralAdapterContract.getPositionHealthFactor(item, { gasLimit: 1000000 });
 
     var positionsToString = activepositions.toString();
 
-    var fmtPositions = positionsToString.split(' ');
+    var fmtPositions = positionsToString.split(',');
 
-    for (let item = 0; item < fmtPositions.length; item++) {
-      console.log(fmtPositions[item]);
-      
-    }
+    const positionsMap = [];
+    const keyArray = ["id", "usrAddress", "debt", "dcr"];
 
-    positions.push(fmtPositions);
+    fmtPositions.map(function (value, index) {
+      positionsMap.push(value)
+    })
+
+    const positionsArray = Object.assign.apply({}, keyArray.map( (v, i) => ( {[v]: fmtPositions[i]} ) ) );
+
+    positions.push(positionsArray);
 
   }
 
   var context = {
     data: positions,
   };
-  console.log(context);
 
   res.json(context);
 });
