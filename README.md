@@ -12,7 +12,7 @@
   </a>
 </p>
 
-> bKES is a lending/stablecoin protocol on Polygon that accepts MATIC/USDC and OpenSea NFTs as collateral when a user creates a debt position and mints bKES(an overcollateralized stablecoin pegged 1:1 with Kenyan Shilling). The protocol enables precise debt-collateral ratios thanks to chainlink's API consumers and prevents negative debt positions thanks to user-incentivised liquidations on the platform by allowing anyone with MetaMask to liquidate a position whose health factor(debt-collateral ratio) is low and get a cut of the positions' collateral.
+> bKES is a stablecoin lending protocol on Polygon that accepts MATIC/USDC and OpenSea NFTs as collateral when a user creates a debt position and mints bKES(an overcollateralized stablecoin pegged 1:1 with the Kenyan Shilling). The protocol enables precise debt-collateral ratios thanks to chainlink's API consumers and prevents negative debt positions thanks to user-incentivised liquidations on the platform by allowing anyone with MetaMask to liquidate a position whose health factor(debt-collateral ratio) is low and get a cut of the positions' collateral.
 
 ### 🏠 [Homepage](https://github.com/AllanM007/bKES-contracts)
 
