@@ -125,10 +125,14 @@
           amount: document.getElementById("amount").value
         },
         success: function (data) {
-          console.log("succesful data post");
+          // console.log("succesful data post");
+          if(data['success']){
+            alert("message you want to show");
+        }
         },
         error: function (err) {
           console.log(err.statusText);
+          alert("Oops! Something went wrong.");
         }
       });
     }

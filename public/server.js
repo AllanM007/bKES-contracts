@@ -239,7 +239,8 @@ async function mintbKES(usrAddress, mintAmount) {
 
     // calculatePositionHealthFactor(usrAddress);
 
-    return "Mint Succesful";
+    // return "Mint Succesful";
+    res.jsonp({success : true})
   } catch (error) {
     console.log(error);
 
@@ -363,8 +364,8 @@ router.post("/liquidatePosition", function (req, res) {
   var data = req.body;
   console.log(data);
 
-  var usrAddress = data.positionOwnerAddress;
-  var liquidatorAddress = data.liquidatorAddress;
+  var usrAddress = data.usrAddress;
+  var liquidatorAddress = "0x391E3567e8Da8018f592e1855A4459629c0E1d8A";;
 
   return new Promise((resolve) => {
     setTimeout(() => {
