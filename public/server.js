@@ -71,6 +71,11 @@ router.get("/", function (req, res) {
   //__dirname : It will resolve to your project folder.
 });
 
+router.get("/transfer", function (req, res) {
+  res.sendFile(path.join(__dirname + "/transferNFT.html"));
+  //__dirname : It will resolve to your project folder.
+});
+
 router.post("/valueCollateral", function (req, res) {
   var data = req.body;
   console.log(data);
