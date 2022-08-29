@@ -1,8 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const url = require('url');
 const path = require("path");
+const axios = require("axios");
 const bodyParser = require("body-parser");
+
 const router = express.Router();
 
 app.use(
@@ -13,6 +16,7 @@ app.use(
 
 const API_KEY = process.env.ALCHEMY_KEY;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const POLYGONSCAN_KEY = process.env.POLYGONSCAN_KEY;
 const collateralAdapter = process.env.collateralAdapter_ADDRESS;
 const oracleAddress = process.env.oracleContract_ADDRESS;
 const openseaOracleAddress = process.env.openseaOracle_ADDRESS;
@@ -130,14 +134,14 @@ async function collateralValuation(address, amount) {
   }
 }
 
-router.post("/valueNFTCollateral", function (req, res) {
+router.get("/valueNFTCollateral", function (req, res) {
   var data = req.body;
-  console.log(data);
-
+  
   var usrAddress = data.address;
-  var transactionID = data.txID;
+  // var transactionID = data.txID;
+   let transactionID = "0x3493a31c09aef35411f89507a2ae84e6739a57a826c661552d328b296f8c0a78"
 
-  console.log("70.", usrAddress, transactionID);
+  // console.log("70.", usrAddress, transactionID);
 
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -147,41 +151,59 @@ router.post("/valueNFTCollateral", function (req, res) {
 });
 
 async function nftCollateralValuation(address, transactionID) {
-  const gasPrice = await alchemyProvider.getGasPrice();
 
-  const formattedGasPrice = gasPrice.toString();
+  let payload = { 
+    module:'transaction',
+    action: 'gettxreceiptstatus',
+    txhash: transactionID,
+    apikey: POLYGONSCAN_KEY
+  
+  };
 
-  console.log(formattedGasPrice);
+  const params = new url.URLSearchParams(payload);
 
-  const collateralPrice = await oracleContract.price();
+  let res = await axios.get(`https://api-testnet.polygonscan.com/api?${params}`);
 
-  const fmtCollateralPrice = collateralPrice.toString();
+  let data = res.data;
+  console.log(data);
 
-  console.log(fmtCollateralPrice);
+  return data;
 
-  try {
-    const collateralAdaptertx = await collateralAdapterContract
-      .connect(signer)
-      .collateralValuation(address, amount, fmtCollateralPrice, {
-        gasLimit: 50000,
-      });
+  // const gasPrice = await alchemyProvider.getGasPrice();
 
-    console.log(collateralAdaptertx);
+  // const formattedGasPrice = gasPrice.toString();
 
-    const collateralAdapterObject = await collateralAdaptertx.wait();
+  // console.log(formattedGasPrice);
 
-    console.log(collateralAdapterObject);
+  // const collateralPrice = await oracleContract.price();
 
-    const valuationObject = collateralAdapterObject.events.find(
-      (event) => event.event === "SuccesfulERC20Valuation"
-    );
+  // const fmtCollateralPrice = collateralPrice.toString();
 
-    const [to, value] = valuationObject.args;
+  // console.log(fmtCollateralPrice);
 
-    console.log(to, value.toString());
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   const collateralAdaptertx = await collateralAdapterContract
+  //     .connect(signer)
+  //     .collateralValuation(address, amount, fmtCollateralPrice, {
+  //       gasLimit: 50000,
+  //     });
+
+  //   console.log(collateralAdaptertx);
+
+  //   const collateralAdapterObject = await collateralAdaptertx.wait();
+
+  //   console.log(collateralAdapterObject);
+
+  //   const valuationObject = collateralAdapterObject.events.find(
+  //     (event) => event.event === "SuccesfulERC20Valuation"
+  //   );
+
+  //   const [to, value] = valuationObject.args;
+
+  //   console.log(to, value.toString());
+  // } catch (error) {
+  //   console.log(error);
+  // }
 }
 
 router.get("/transfer", function (req, res) {
