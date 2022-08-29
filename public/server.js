@@ -130,6 +130,60 @@ async function collateralValuation(address, amount) {
   }
 }
 
+router.post("/valueNFTCollateral", function (req, res) {
+  var data = req.body;
+  console.log(data);
+
+  var usrAddress = data.address;
+  var transactionID = data.txID;
+
+  console.log("70.", usrAddress, transactionID);
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(nftCollateralValuation(usrAddress, transactionID));
+    }, 2000);
+  });
+});
+
+async function nftCollateralValuation(address, transactionID) {
+  const gasPrice = await alchemyProvider.getGasPrice();
+
+  const formattedGasPrice = gasPrice.toString();
+
+  console.log(formattedGasPrice);
+
+  const collateralPrice = await oracleContract.price();
+
+  const fmtCollateralPrice = collateralPrice.toString();
+
+  console.log(fmtCollateralPrice);
+
+  try {
+    const collateralAdaptertx = await collateralAdapterContract
+      .connect(signer)
+      .collateralValuation(address, amount, fmtCollateralPrice, {
+        gasLimit: 50000,
+      });
+
+    console.log(collateralAdaptertx);
+
+    const collateralAdapterObject = await collateralAdaptertx.wait();
+
+    console.log(collateralAdapterObject);
+
+    const valuationObject = collateralAdapterObject.events.find(
+      (event) => event.event === "SuccesfulERC20Valuation"
+    );
+
+    const [to, value] = valuationObject.args;
+
+    console.log(to, value.toString());
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 router.get("/transfer", function (req, res) {
   res.sendFile(path.join(__dirname + "/transfer.html"));
 });

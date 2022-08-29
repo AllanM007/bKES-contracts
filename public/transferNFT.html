@@ -90,7 +90,7 @@
         url: '/verifyNFTTx',
         data: {
           address: account,
-          amount: document.getElementById("txID").value
+          txID: document.getElementById("txID").value
         },
         success: function (data) {
           if(data['success']){
