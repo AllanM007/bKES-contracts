@@ -136,7 +136,7 @@ async function collateralValuation(address, amount) {
 
 router.get("/valueNFTCollateral", function (req, res) {
   var data = req.body;
-  
+
   var usrAddress = data.address;
   // var transactionID = data.txID;
    let transactionID = "0x3493a31c09aef35411f89507a2ae84e6739a57a826c661552d328b296f8c0a78"
@@ -165,9 +165,26 @@ async function nftCollateralValuation(address, transactionID) {
   let res = await axios.get(`https://api-testnet.polygonscan.com/api?${params}`);
 
   let data = res.data;
-  console.log(data);
+  console.log(data['result']['status']);
 
-  return data;
+  // return data;
+  if (data['result']['status'] == 1) {
+
+    let Payload = { 
+      include_orders : 'false'
+    
+    };
+  
+    const parameters = new url.URLSearchParams(Payload);
+  
+    let response = await axios.get(`https://api.opensea.io/api/v1/asset/0xb47e3cd837ddf8e4c57f05d70ab865de6e193bbb/1/?${params}`);
+  
+    let data = response.data;
+    console.log(data);
+    
+  } else {
+    
+  }
 
   // const gasPrice = await alchemyProvider.getGasPrice();
 
