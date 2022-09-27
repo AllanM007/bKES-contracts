@@ -10,9 +10,12 @@ contract CollateralAdapter is ERC20, bKES {
 
     address tokenAddress;
 
+    /// @notice mapping to track member's assets in the protocol
     mapping(address => uint256) public Vault;
+    /// @notice mapping to track member's active debt in the protocol
     mapping(address => uint256) public ActiveDebtAmount;
 
+    /// @notice struct to track a user's debt positions healthfactor
     struct HealthFactor {
         uint id;
         address usrAddress;
@@ -22,20 +25,28 @@ contract CollateralAdapter is ERC20, bKES {
 
     HealthFactor healthFactor;
 
+    /// @notice mapping to index healthfactor's positions
     mapping(uint => HealthFactor) public positionHealthFactor;
+    /// @notice unsigned integer to track current debt positions count
     uint public positionsCount;
 
+    /// @notice pass bKES token address variable to instantiate contract
     constructor(address bKESTokenAddress) {
         tokenAddress = bKESTokenAddress;
         positionsCount = 0;
     }
 
+    /// @notice event to track erc20 token collateral valuation
     event SuccesfulERC20Valuation(address account, uint256 amount);
+    /// @notice event to track erc20 token withdrawal
     event SuccesfulERC20Withdrawal(address account, uint256 amount);
 
+    /// @notice event to track bKES token mint action
     event successfulbKESMint(address account, uint256 amount);
+    /// @notice event to track bKES token burn action
     event successfulbKESBurn(address account, uint256 amount);
 
+    /// @notice function to value collateral a user deposits to determine the bKES amount they can mint
     function collateralValuation(
         address _account,
         uint256 _amount,
@@ -57,6 +68,7 @@ contract CollateralAdapter is ERC20, bKES {
         return collateralValue;
     }
 
+    /// @notice function to withdraw a user's collateral
     function withdrawTokenCollateral(
         address _account,
         address collateralAddress,
@@ -79,6 +91,7 @@ contract CollateralAdapter is ERC20, bKES {
         return true;
     }
 
+    /// @notice function to calculate a user's debt position health
     function calculateHealthFactor(address _account, uint256 collateralPrice)
         public
         returns (uint256)
@@ -105,6 +118,7 @@ contract CollateralAdapter is ERC20, bKES {
         return debtRatio;
     }
 
+    /// @notice function to get a position's health factor
     function getPositionHealthFactor(uint id)
         public
         view
@@ -115,6 +129,7 @@ contract CollateralAdapter is ERC20, bKES {
         return positionHealthFactor[id];
     }
 
+    /// @notice function to initiate a mint bKES action
     function initiateMint(address _account, uint256 _amount)
         public
         returns (bool)
@@ -136,6 +151,7 @@ contract CollateralAdapter is ERC20, bKES {
         return true;
     }
 
+    /// @notice function to initiate a burn bKES action
     function initiateBurn(address _account, uint256 _amount)
         public
         returns (bool)
@@ -157,6 +173,7 @@ contract CollateralAdapter is ERC20, bKES {
         return true;
     }
 
+    /// @notice function to liquidate a user's undercollateralized position
     function liquidatePosition(address _owner, address _liquidator)
         public
         returns (bool)

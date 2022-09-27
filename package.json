@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
-    "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/contracts": "^4.7.3",
     "api": "^4.5.2",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
